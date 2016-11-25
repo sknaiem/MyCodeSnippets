@@ -140,4 +140,24 @@ Function DoVendorSearch(model)
 	set cmd = nothing
 	set Recordset = nothing
 End Function
+
+'***** nshaik: Loads in an HTML Template that a designer can work on separatly from the programming.
+function GetTemplate2(sTemplateFileName)
+      dim fso
+      dim f
+      dim ts
+      dim sTemplate
+   
+      set fso = Server.CreateObject("Scripting.FileSystemObject")
+      set f = fso.GetFile(Server.MapPath(TEMPLATE_PATH & sTemplateFileName))
+      set ts = f.OpenAsTextStream(ForReading, -2)
+      do while not ts.AtEndOfStream
+         sTemplate = sTemplate & ts.ReadLine & vbCrLf
+      loop
+      ts.close
+      set ts = nothing
+      set f = nothing
+      set fso = nothing
+      GetTemplate2 = sTemplate
+end function 
 %>
