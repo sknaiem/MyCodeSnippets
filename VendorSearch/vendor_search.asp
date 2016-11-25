@@ -61,7 +61,7 @@ ATTNY_SPECIALTY = trim(Request.Form("ATTNY_SPECIALTY"))
 
 
 '******************************* Page Processing '*******************************
-IF process = "1" Then
+IF process <> "1" Then
     TheModel = ""' this maybe be a small set of records or a view that is passed into GET_ShowConformation to be processed; not sure yet.
     'Our form has submitted lets do something here, clean up, validate a little or what ever.
 
@@ -72,11 +72,11 @@ IF process = "1" Then
     'Need somthing here or can do in the function if no records are found.
 
     'Processed successfuly and now we display a friendsly message. This could be a hidden div that we later make visible or just load a template into display results.
-    strDisplay = " We have posted back and all is well"
+    'strDisplay = " We have posted back and all is well"
 
     'If all goes well we then display results.
     'strDisplay = strConformationTemplate
-    'strDisplay= Calculate_VendorSearch ()
+    strDisplay= DoVendorSearch()
 
 ELSE
     'can load in template of form here.

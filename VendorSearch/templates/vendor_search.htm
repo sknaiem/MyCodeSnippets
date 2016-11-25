@@ -15,7 +15,7 @@
                 </td>
                 <td align="left" width="350" valign="top">
 
-                    <select name="Basic_category" id="Basic_category" size="1" onchange="checkInput(this);">
+                    <select name="Basic_category" id="Basic_category" size="1" >
                         [CategoryOptions]
                     </select>
                 </td>
@@ -106,7 +106,8 @@
             <td align="left" width="350" valign="top">
                 <input type="hidden" name="all" value="0">
                 <!--<input type="image" value="Search" src="images_emart/buttons/IFA/search.gif" border="0" align="absmiddle">-->
-                <input type="button" id="btnSubmit" name="btnSubmit" value="Search"/>
+				<input type="hidden" name="process" value="1" />
+                <input type="submit" id="btnSubmit" name="btnSubmit" value="Search"/>
             </td>
         </tr>
         </form>
@@ -114,11 +115,12 @@
         <tr>
             <td align="left" valign="top" colspan="2">
                 <br><p align="left"><b>-OR-</b></p>
-                <form name="get_vendors" id="get_vendors" action="index.cfm?page=services_vendors_action" method="post" onsubmit="return _CF_checkget_vendors(this)">
+                <form name="get_vendors" id="get_vendors" action="vendor_search.asp" method="post">
                     <b>View Entire Vendors Directory</b><br><br>
                     <input type="hidden" name="all" value="1">
                     <!--<input type="image" value="View ALL" src="images_emart/buttons/IFA/view_all.gif">-->
-                    <input type="button" id="btnSubmitViewAll" name="btnSubmitViewAll" value="View ALL" />
+					<input type="hidden" name="process" value="1" />
+                    <input type="submit" id="btnSubmitViewAll" name="btnSubmitViewAll" value="View ALL" />
                 </form>
 
             </td>

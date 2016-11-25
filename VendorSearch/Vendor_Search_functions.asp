@@ -12,7 +12,7 @@ Function GetVendorCategories()
 	End With
 	
 	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option option='" & Recordset.Fields("CategoryID").value & "'>" & Recordset.Fields("CategoryName").value & "</option>"
+		strSB = strSB & "<option value='" & Recordset.Fields("CategoryID").value & "'>" & Recordset.Fields("CategoryName").value & "</option>"
 		Recordset.MoveNext
 	LOOP
 
@@ -35,7 +35,7 @@ Function GetStatesOrProvince()
 	End With
 
 	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option option='" & Recordset.Fields("state").value & "'>" & Recordset.Fields("state").value & "</option>"
+		strSB = strSB & "<option value='" & Recordset.Fields("state").value & "'>" & Recordset.Fields("state").value & "</option>"
 		Recordset.MoveNext
 	Loop
 
@@ -58,7 +58,7 @@ Function GetCountries()
 	End With
 
 	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option option='" & Recordset.Fields("countryname").value & "'>" & Recordset.Fields("countryname").value & "</option>"
+		strSB = strSB & "<option value='" & Recordset.Fields("countryname").value & "'>" & Recordset.Fields("countryname").value & "</option>"
 		Recordset.MoveNext
 	Loop
 
@@ -81,7 +81,7 @@ Function GetAttorneyPracticingStates()
 	End With
 
 	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option option='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
+		strSB = strSB & "<option value='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
 		Recordset.MoveNext
 	Loop
 
@@ -104,7 +104,7 @@ Function GetAttorneySpecilaties()
 	End With
 
 	DO UNTIL Recordset.EOF
-		strSB = strSB & "<option option='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"
+		strSB = strSB & "<option value='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"
 		Recordset.MoveNext
 	Loop
 
@@ -116,10 +116,32 @@ End Function
 
 ' it does the vendor search
 ' model will have categoryid, stateorprovince, country, specialtyId, searchText, PracticingStateID, name, firm
-Function DoVendorSearch(model)
-	Dim strSB, strSBC
+Function DoVendorSearch()
+	dim isVendorSet
+	dim isPreferredVendorSet
+	dim prevCategory
+	dim prevCountry
+	dim prevState
+	dim strSB
+	'Dim strSBC
+	dim categoryID,stateOrProvince,country,specialtyID,searchText,practicingStateID,attorneyName,attorneyFirm
+	dim vendorType, categoryName, state, city, companyName
+	isVendorSet = false
+	isPreferredVendorSet = false
+	prevCategory = ""
+	prevCountry = ""
+	prevState = ""
 	strSB = ""
-	strSBC = ""
+	categoryID = 8
+	stateOrProvince = ""
+	country = ""	
+	searchText = ""
+	practicingStateID = ""
+	attorneyName = ""
+	attorneyFirm = ""	
+	strSB = ""
+	'strSBC = ""
+	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -135,12 +157,44 @@ Function DoVendorSearch(model)
 	   .Parameters.Append .CreateParameter("@firm",adVarChar,adParamInput,255,attorneyFirm)
 	   set Recordset = .Execute
 	End With
-
-	do while not Recordset.EOF
-		' ToDo:you got the data now use it to display in the way you want to.
+	
+	strSB = strSB & "<table>"
+	
+	DO UNTIL Recordset.EOF		
+		vendorType = Recordset.Fields("VendorType").value
+		categoryName = Recordset.Fields("CategoryName").value
+		country = Recordset.Fields("Country").value
+		state = Recordset.Fields("State").value
+		city = Recordset.Fields("City").value
+		companyName = Recordset.Fields("CompanyName").value
+		
+		if vendorType = "Preferred Vendor" and isPreferredVendorSet = false then
+			strSB = strSB & "<tr style='background: #2659B6;'><td>IFA Preferred Vendor</td></tr>"
+			isPreferredVendorSet = true
+		elseif vendorType = "Vendor" and isVendorSet = false then
+			strSB = strSB & "<tr style='background: #2659B6;'><td>IFA Vendor</td></tr>"
+			isVendorSet = true
+		end if
+		if prevCategory = "" or (prevCategory <> "" and categoryName <> prevCategory) then
+			strSB = strSB & "<tr style='background: tan'><td>"&categoryName&"</td></tr>"
+			prevCategory = categoryName
+		end if
+		if prevCountry = "" or (prevCountry <> "" and country <> prevCountry) then
+			strSB = strSB & "<tr><td style='padding:4px;'>"&country&"</td></tr>"
+			prevCountry = country
+		end if
+		if prevState = "" then
+		strSB = strSB & "<tr><td style='padding-top:10px;'>"&state&"</td></tr><tr><td>"
+		prevState = state
+		elseif prevState <> "" and state <> prevState then
+		strSB = strSB & "</td></tr><tr><td style='padding-top:10px;'>"&state&"</td></tr><tr><td>"
+		prevState = state
+		end if
+		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a>"&companyName&"</a><br/>"
+		strSB = strSB & city&","&state&","&country&"</div>"
 		Recordset.MoveNext
-	loop
-
+	LOOP
+	strSB = strSB & "</table>"
 	DoVendorSearch = strSB
 	'Clean up
 	set cmd = nothing
