@@ -1,4 +1,5 @@
 <%
+' pseudo code
 ' get data from Vendorlist stored proc
 ' we have data in recordset
 dim isVendorSet = false
