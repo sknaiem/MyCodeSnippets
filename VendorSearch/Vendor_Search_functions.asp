@@ -5,15 +5,16 @@ Function GetVendorCategories()
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "VendorCategoryLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
-
-	do until Recordset.EOF
-		strSB = strSB & "<option option='"&Recordset["CategoryID"]&"'>"&Recordset["CategoryName"]&"</option>"
-	loop
+	
+	Do UNTIL Recordset.EOF
+		strSB = strSB & "<option option='" & Recordset.Fields("CategoryID").value & "'>" & Recordset.Fields("CategoryName").value & "</option>"
+		Recordset.MoveNext
+	LOOP
 
 	GetVendorCategories = strSB
 	'Clean up
@@ -27,15 +28,16 @@ Function GetStatesOrProvince()
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "VendorStateProvLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
 
-	do until Recordset.EOF
-		strSB = strSB & "<option option='"&Recordset["state"]&"'>"&Recordset["state"]&"</option>"
-	loop
+	Do UNTIL Recordset.EOF
+		strSB = strSB & "<option option='" & Recordset.Fields("state").value & "'>" & Recordset.Fields("state").value & "</option>"
+		Recordset.MoveNext
+	Loop
 
 	GetStatesOrProvince = strSB
 	'Clean up
@@ -49,15 +51,16 @@ Function GetCountries()
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "VendorCountryLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
 
-	do until Recordset.EOF
-		strSB = strSB & "<option option='"&Recordset["countryname"]&"'>"&Recordset["countryname"]&"</option>"
-	loop
+	Do UNTIL Recordset.EOF
+		strSB = strSB & "<option option='" & Recordset.Fields("countryname").value & "'>" & Recordset.Fields("countryname").value & "</option>"
+		Recordset.MoveNext
+	Loop
 
 	GetCountries = strSB
 	'Clean up
@@ -71,15 +74,16 @@ Function GetAttorneyPracticingStates()
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "AttorneyPracStateLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
 
-	do until Recordset.EOF
-		strSB = strSB & "<option option='"&Recordset["LaocationID"]&"'>"&Recordset["LocationName"]&"</option>"
-	loop
+	Do UNTIL Recordset.EOF
+		strSB = strSB & "<option option='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
+		Recordset.MoveNext
+	Loop
 
 	GetAttorneyPracticingStates = strSB
 	'Clean up
@@ -93,15 +97,16 @@ Function GetAttorneySpecilaties()
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "AttorneySpecialityLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
 
-	do until Recordset.EOF
-		strSB = strSB & "<option option='"&Recordset["SpecialtyID"]&"'>"&Recordset["SpecialtyName"]&"</option>"
-	loop
+	DO UNTIL Recordset.EOF
+		strSB = strSB & "<option option='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"
+		Recordset.MoveNext
+	Loop
 
 	GetAttorneySpecilaties = strSB
 	'Clean up
@@ -117,9 +122,9 @@ Function DoVendorSearch(model)
 	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
-	   .ActiveConnection = CustomConn 
+	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
-	   .CommandText = "AttorneySpecialityLookup" ' Set the name of the Stored Procedure to use 
+	   .CommandText = "listvendors" ' Set the name of the Stored Procedure to use 
 	   .Parameters.Append .CreateParameter("@categoryID",adInteger,adParamInput,,categoryID)
 	   .Parameters.Append .CreateParameter("@stateProvince",adVarChar,adParamInput,7,stateOrProvince)
 	   .Parameters.Append .CreateParameter("@country",adVarChar,adParamInput,50,country)
@@ -131,8 +136,9 @@ Function DoVendorSearch(model)
 	   set Recordset = .Execute
 	End With
 
-	do until Recordset.EOF
+	do while not Recordset.EOF
 		' ToDo:you got the data now use it to display in the way you want to.
+		Recordset.MoveNext
 	loop
 
 	DoVendorSearch = strSB

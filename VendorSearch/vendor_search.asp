@@ -12,7 +12,7 @@
 <!--#include file="../../includes/displayformatteditem2.asp"-->
 <!--#include file="../../includes/member_directory.asp"-->
 <!--#include file="../../includes/member_control.asp"-->
-<!--#include file="vendor_search_functions.asp" -->
+<!--#include file="Vendor_Search_functions.asp" -->
 
 
 <%
@@ -82,6 +82,7 @@ ELSE
     'can load in template of form here.
     'strDisplay = " We display the form here."
     'We might have to load in catagories and other things here; not sure yet.
+	dim vendorCategories, stateOrProvince, countries, attorneyPracticingStates, attorneySpecialties
 	vendorCategories = GetVendorCategories()
 	stateOrProvince = GetStatesOrProvince()
 	countries = GetStatesOrProvince()
