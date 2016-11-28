@@ -36,7 +36,7 @@ strSearchTemplate = GetTemplate2("vendor_search.htm")
 
 '________________ REQUEST.FORM ________________
 process = trim(Request.Form("process"))
-
+all = trim(Request.Form("all"))
 '*** Search Criteria ***
 '[Basic Search]
 Basic_category = trim(Request.Form("Basic_category")) 
@@ -61,9 +61,23 @@ ATTNY_SPECIALTY = trim(Request.Form("ATTNY_SPECIALTY"))
 
 
 '******************************* Page Processing '*******************************
-IF process <> "1" Then
-    TheModel = ""' this maybe be a small set of records or a view that is passed into GET_ShowConformation to be processed; not sure yet.
-    'Our form has submitted lets do something here, clean up, validate a little or what ever.
+IF process = "1" or all = "1" Then
+	dim model(8)
+	if all = "1" then
+		model(0) = "11"		
+	else
+		model(0) = Basic_category
+		model(1) = Basic_state
+		model(2) = Basic_country
+		model(3) = Basic_Keyword_Search
+		model(4) = ATTNY_NAME
+		model(5) = ATTNY_FIRM
+		model(6) = ATTNY_STATE
+		model(7) = ATTNY_SPECIALTY
+	end if
+	
+    
+    'ToDo: Our form has submitted lets do something here, clean up, validate a little or what ever.
 
     'Call the processing function
     'Call SomeFunctionName (strSomeVariableName, strSomeVariableName, strSomeVariableName)
@@ -75,26 +89,29 @@ IF process <> "1" Then
     'strDisplay = " We have posted back and all is well"
 
     'If all goes well we then display results.
-    'strDisplay = strConformationTemplate
-    strDisplay= DoVendorSearch()
+    'strDisplay = strConformationTemplate	
+    strSB = DoVendorSearch(model)
+	strSB = StrSB & "<hr size='1' align='center'>"
+	strSB = strSB & populateSearchPage()
+	strDisplay = strSB
 
 ELSE
     'can load in template of form here.
     'strDisplay = " We display the form here."
     'We might have to load in catagories and other things here; not sure yet.
-	dim vendorCategories, stateOrProvince, countries, attorneyPracticingStates, attorneySpecialties
-	vendorCategories = GetVendorCategories()
-	stateOrProvince = GetStatesOrProvince()
-	countries = GetStatesOrProvince()
-	attorneyPracticingStates = GetAttorneyPracticingStates()
-	attorneySpecialties = GetAttorneySpecilaties()
-    strSB = strSearchTemplate
-	strSB = replace(strSB,"[CategoryOptions]",vendorCategories)
-	strSB = replace(strSB,"[StateProvinceOptions]",stateOrProvince)
-	strSB = replace(strSB,"[CountryOptions]",countries)
-	strSB = replace(strSB,"[AttorneyPracticingStateOptions]",attorneyPracticingStates)
-	strSB = replace(strSB,"[AttorneySpecialtiesOptions]",attorneySpecialties)
-	strDisplay = strSB
+	' dim vendorCategories, stateOrProvince, countries, attorneyPracticingStates, attorneySpecialties
+	' vendorCategories = GetVendorCategories()
+	' stateOrProvince = GetStatesOrProvince()
+	' countries = GetCountries()
+	' attorneyPracticingStates = GetAttorneyPracticingStates()
+	' attorneySpecialties = GetAttorneySpecilaties()
+    ' strSB = strSearchTemplate
+	' strSB = replace(strSB,"[CategoryOptions]",vendorCategories)
+	' strSB = replace(strSB,"[StateProvinceOptions]",stateOrProvince)
+	' strSB = replace(strSB,"[CountryOptions]",countries)
+	' strSB = replace(strSB,"[AttorneyPracticingStateOptions]",attorneyPracticingStates)
+	' strSB = replace(strSB,"[AttorneySpecialtiesOptions]",attorneySpecialties)
+	strDisplay = populateSearchPage()
 END IF
 '********************************************************************************
 
@@ -129,7 +146,7 @@ Sub HeadCode()
  custom_head_code 
 %>
 
-<!-- MBELCHER: This is used for our fraud record template -->
+<!-- MBELCHER: This is used for our Vendor search template -->
 <link rel="stylesheet" type="text/css" href="templates/vendor_search.css">
 
 <%
@@ -161,6 +178,7 @@ Sub BreadCrumbs()
 
 <div id="SearchResults">
 <%=strDisplay %>
+<%="All:"&all%>
 </div>
 
 	

@@ -7,7 +7,7 @@
         <!--<form name="get_vendors" id="get_vendors" action="index.cfm?page=services_vendors_action" method="post" onsubmit="return _CF_checkget_vendors(this)">-->
         <form name="frmVendorSearch" id="frmVendorSearch" action="vendor_search.asp" method="post">
 
-            <input type="hidden" name="process" value="1">
+            <!--<input type="hidden" name="process" value="1">-->
 
             <tr>
                 <td align="left" width="80" valign="top">
@@ -26,6 +26,7 @@
                 </td>
                 <td align="left" width="350" valign="top">
                     <select name="Basic_state" id="Basic_state" size="1">
+						<option selected="selected" value="--ALL--">--ALL--</option>
                         [StateProvinceOptions]
                     </select>
                 </td>
@@ -36,6 +37,7 @@
                 </td>
                 <td align="left" width="350" valign="top">
                     <select name="Basic_country" id="Basic_country" size="1">
+						<option selected="selected" value="--ALL--">--ALL--</option>
                         [CountryOptions]
                     </select>
                 </td>
@@ -82,6 +84,7 @@
                 </td>
                 <td>
                     <select name="ATTNY_STATE" id="ATTNY_STATE" size="1">
+						<option value="2">--ALL--</option>
                         [AttorneyPracticingStateOptions]
                     </select>
                 </td>
@@ -118,8 +121,7 @@
                 <form name="get_vendors" id="get_vendors" action="vendor_search.asp" method="post">
                     <b>View Entire Vendors Directory</b><br><br>
                     <input type="hidden" name="all" value="1">
-                    <!--<input type="image" value="View ALL" src="images_emart/buttons/IFA/view_all.gif">-->
-					<input type="hidden" name="process" value="1" />
+                    <!--<input type="image" value="View ALL" src="images_emart/buttons/IFA/view_all.gif">-->					
                     <input type="submit" id="btnSubmitViewAll" name="btnSubmitViewAll" value="View ALL" />
                 </form>
 
