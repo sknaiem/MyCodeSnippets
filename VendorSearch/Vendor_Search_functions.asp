@@ -125,7 +125,7 @@ Function DoVendorSearch(model)
 	dim strSB
 	
 	dim categoryID,stateOrProvince,country,specialtyID,searchText,practicingStateID,attorneyName,attorneyFirm
-	dim vendorType, categoryName, state, province, city, companyName
+	dim vendorType, categoryName, state, province, city, companyName,memberId
 	isVendorSet = false
 	isPreferredVendorSet = false
 	'prevPrefCategory = ""
@@ -141,8 +141,8 @@ Function DoVendorSearch(model)
 	searchText = model(3)
 	attorneyName = model(4)
 	attorneyFirm = model(5)
-	practicingStateID = ""'model(6) 'ToDo: Need to modify
-	specialtyID = 0'model(7)'ToDo: Need to modify
+	practicingStateID = model(6) 'ToDo: Need to modify
+	specialtyID = model(7)'ToDo: Need to modify
 	strSB = ""
 	'strSBC = ""
 	
@@ -152,11 +152,11 @@ Function DoVendorSearch(model)
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "listvendors" ' Set the name of the Stored Procedure to use 
 	   .Parameters.Append .CreateParameter("@categoryID",adInteger,adParamInput,,categoryID)
-	   .Parameters.Append .CreateParameter("@stateProvince",adVarChar,adParamInput,8,stateOrProvince)
+	   .Parameters.Append .CreateParameter("@stateProvince",adVarChar,adParamInput,50,stateOrProvince)
 	   .Parameters.Append .CreateParameter("@country",adVarChar,adParamInput,50,country)
 	   .Parameters.Append .CreateParameter("@specialtyID",adInteger,adParamInput,,specialtyID)
 	   .Parameters.Append .CreateParameter("@searchText",adVarChar,adParamInput,255,searchText)
-	   .Parameters.Append .CreateParameter("@practicingStateID",adVarChar,adParamInput,5,practicingStateID)
+	   .Parameters.Append .CreateParameter("@practicingStateID",adInteger,adParamInput,,practicingStateID)
 	   .Parameters.Append .CreateParameter("@name",adVarChar,adParamInput,255,attorneyName)
 	   .Parameters.Append .CreateParameter("@firm",adVarChar,adParamInput,255,attorneyFirm)
 	   set Recordset = .Execute
@@ -172,6 +172,7 @@ Function DoVendorSearch(model)
 		province = Recordset.Fields("Province").value
 		city = Recordset.Fields("City").value
 		companyName = Recordset.Fields("CompanyName").value
+		memberId = Recordset.Fields("MemberID").value
 		
 		if vendorType = "Preferred Vendor" and isPreferredVendorSet = false then
 			strSB = strSB & "<tr style='background: #2659B6;'><td>IFA Preferred Vendor</td></tr>"
@@ -216,7 +217,7 @@ Function DoVendorSearch(model)
 						end if			
 					end if
 		strSB = strSB & "<tr><td>"
-		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a>"&companyName&"</a><br/>"
+		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a href='VendorDetails.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
 		strSB = strSB & city&","&state&","&country&"</div>"
 		strSB = strSB & "</td></tr>"
 		Recordset.MoveNext
@@ -243,6 +244,169 @@ function populateSearchPage()
 	strSB = replace(strSB,"[AttorneySpecialtiesOptions]",attorneySpecialties)
 	populateSearchPage = strSB
 end function
+
+Function GetVendorDetails(id)
+	dim count, primaryRecordsetCounter, specialtyCounter
+	dim memberType
+	dim strSB
+	dim logoPath
+	dim companyName, address, cityStateZip, country, companyInformation, specialty, contactName, contactEmail,contactPhone, companyFax, companyUrl
+	dim specialtyName
+	dim practicingState
+	dim recommended, recommFirmAttorney, yearsServiceUsed, showRecomInfo, recommComment, recommendedBy
+	strSB = ""
+	logoPath = ""
+	companyName = ""
+	address=""
+	cityStateZip = ""
+	country = ""
+	companyInformation = ""
+	specialty = ""
+	contactName = ""
+	contactEmail = ""
+	contactPhone = ""
+	companyFax = ""
+	companyUrl = ""
+	specialtyName = ""
+	practicingState = ""
+	recommended =""
+	recommFirmAttorney = ""
+	yearsServiceUsed = ""
+	showRecomInfo = ""
+	recommComment = ""
+	recommendedBy = ""
+	
+	Set cmd = Server.CreateObject("ADODB.Command")
+	With cmd
+	   .ActiveConnection = IFAconn 
+	   .CommandType = adCmdStoredProc
+	   .CommandText = "viewvendor" ' Set the name of the Stored Procedure to use 
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)	   
+	   set Recordset = .Execute
+	End With
+	count = 1
+	primaryRecordsetCounter = 1
+	specialtyCounter = 1
+	Do UNTIL Recordset IS NOTHING
+		if count = 1 then 
+			DO UNTIL Recordset.EOF
+				memberType = Recordset.Fields("MemberType").value
+				logoPath = Recordset.Fields("LogoPath").value
+				companyName = Recordset.Fields("CompanyName").value
+				isPreferred = instr(1,memberType,"Preferred",1)=1
+				address = Recordset.Fields("Address").value
+				cityStateZip = Recordset.Fields("CityStateZip").value
+				country = Recordset.Fields("Country").value
+				companyInformation = Recordset.Fields("CompanyInfo").value
+				specialty = Recordset.Fields("Specialties").value
+				generalComments = Recordset.Fields("CompanyInfo").value
+				contactName = Recordset.Fields("ContactName").value
+				contactEmail = Recordset.Fields("ContactEmail").value
+				contactPhone = Recordset.Fields("ContactPhone").value
+				companyFax = Recordset.Fields("CompanyFax").value
+				companyUrl = Recordset.Fields("CompanyURL").value
+				IF isPreferred = true THEN
+					strSB = strSB & "<div><b>IFA Preferred Vendor</b></div><br/>"
+				ELSE
+				IF logoPath <> "" THEN
+					strSB = strSB & "<div><img src='"&logoPath&"'/></div><br/>"
+				END IF
+				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
+					'company name and address
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>"&companyName&"</b><br/>"
+					strSB = strSB & address&"br/"
+					strSB = strSB & cityStateZip & "<br/>"
+					strSB = strSB & country
+					strSB = strSB & "</div>"
+					'company information in short
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Company Info:</b><br/>"
+					strSB = strSB & companyInformation
+					strSB = strSB & "</div>"
+					'specialty
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Specialty:</b><br/>"
+					strSB = strSB & specialty
+					strSB = strSB & "</div>"
+					'General comments
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>General Comments:</b><br/>"
+					strSB = strSB & companyInformation
+					strSB = strSB & "</div>"
+				END IF
+				' members contact information
+				strSB = strSB & "<div>"
+				strSB = strSB & "<b>Member(s):</b><br/>"
+				
+				strSB = strSB & contactName & "<br/>"
+				strSB = strSB & "Email: "&contactEmail & "<br/>"
+				strSB = strSB & "Phone: "&contactPhone & "<br/>"
+				
+				strSB = strSB & "</div>"
+				
+				'Contact info of the vendor
+				strSB = strSB & "<div>"
+				strSB = strSB & "<b>Contact Info:</b><br/>"
+				strSB = strSB & "Fax: "& companyFax & "<br/>"
+				strSB = strSB & "URL: "& companyUrl & "<br/>"
+				strSB = strSB & "</div>"
+			LOOP			
+		end if
+		IF count = 2  THEN
+			DO UNTIL Recordset.EOF
+				specialtyName = Recordset.Fields("SpecialtyName").value
+				
+				IF specialtyCounter = 1 then 
+				strSB = strSB & "<div>"
+				strSB = strSB & "<b>Contact Info:</b><br/>"
+				End if
+				
+				strSB = strSB & specialtyName & "<br/>"
+				
+				IF specialtyCounter = 1 then 'Todo: when last record need to execute this
+				strSB = strSB & "</div>"
+				specialtyCounter = specialtyCounter + 1
+				END IF
+				
+			LOOP			
+		END IF
+		IF count = 3 THEN
+			DO UNTIL Recordset.EOF
+				practicingState = Recordset.Fields("PracticingState").value
+				strSB = strSB & "<div>"
+				strSB = strSB & "<b>Other Locations:</b><br/>"
+				strSB = strSB & practicingState & "<br/>"
+				strSB = strSB & "</div>"
+			LOOP			
+		END IF
+		IF count = 4 THEN			
+			IF NOT Recordset.EOF
+				
+				recommended = Recordset.Fields("Recommended").value
+				recommFirmAttorney = Recordset.Fields("RecommFirmAtorney").value
+				yearsServiceUsed = Recordset.Fields("YearsServiceUsed").value
+				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
+				recommComment = Recordset.Fields("RecommComment").value
+				recommendedBy = Recordset.Fields("RecommendedBy").value
+				if showRecomInfo = "1" then
+					strSB = strSB & "<div>"
+					IF recommended = "Yes" Then
+						strSB = strSB & "<b>Recommended Firm or Attorney:</b><br/>"
+						strSB = strSB & recommFirmAttorney & "<br/>"
+					end if
+					strSB = strSB & "<b>Years Service Used:</b><br/>"
+					strSB = strSB & yearsServiceUsed & "<br/>"
+					strSB = strSB & "<b>Comments:</b><br/>"
+					strSB = strSB & recommComment & "<br/>"
+					strSB = strSB & "<b>Recommended By:</b><br/>"
+					strSB = strSB & recommComment & "<br/>"
+				end if
+			End if
+		END IF
+		count = count + 1
+	LOOP
+End Function
 
 '***** nshaik: Loads in an HTML Template that a designer can work on separatly from the programming.
 function GetTemplate2(sTemplateFileName)
