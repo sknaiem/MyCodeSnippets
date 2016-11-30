@@ -141,7 +141,12 @@ Function DoVendorSearch(model)
 	searchText = model(3)
 	attorneyName = model(4)
 	attorneyFirm = model(5)
-	practicingStateID = model(6) 'ToDo: Need to modify
+	
+	IF model(6) = "-ALL-" THEN
+		practicingStateID = null
+	ELSE
+		practicingStateID = model(6)
+	END IF
 	specialtyID = model(7)'ToDo: Need to modify
 	strSB = ""
 	'strSBC = ""
@@ -217,7 +222,7 @@ Function DoVendorSearch(model)
 						end if			
 					end if
 		strSB = strSB & "<tr><td>"
-		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a href='VendorDetails.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
+		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a href='Details.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
 		strSB = strSB & city&","&state&","&country&"</div>"
 		strSB = strSB & "</td></tr>"
 		Recordset.MoveNext
@@ -246,7 +251,7 @@ function populateSearchPage()
 end function
 
 Function GetVendorDetails(id)
-	dim count, primaryRecordsetCounter, specialtyCounter
+	dim count, primaryRecordsetCounter, specialtyCounter, practicingStatesCounter
 	dim memberType
 	dim strSB
 	dim logoPath
@@ -254,6 +259,8 @@ Function GetVendorDetails(id)
 	dim specialtyName
 	dim practicingState
 	dim recommended, recommFirmAttorney, yearsServiceUsed, showRecomInfo, recommComment, recommendedBy
+	dim counts(3)
+	
 	strSB = ""
 	logoPath = ""
 	companyName = ""
@@ -281,14 +288,28 @@ Function GetVendorDetails(id)
 	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "viewvendor" ' Set the name of the Stored Procedure to use 
-	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)	   
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)
+		set Recordset1 = .Execute
 	   set Recordset = .Execute
 	End With
 	count = 1
 	primaryRecordsetCounter = 1
 	specialtyCounter = 1
+	practicingStatesCounter = 1
+	
+	
+	Do Until Recordset1 Is Nothing        
+		counts(count-1)= 0
+        Do Until Recordset1.EOF
+			counts(count-1)= counts(count-1)+1            
+            Recordset1.MoveNext
+        Loop
+        Set Recordset1 = Recordset1.NextRecordset
+        count = count + 1
+    Loop	
+	count = 1
 	Do UNTIL Recordset IS NOTHING
-		if count = 1 then 
+		if count = 1 then			
 			DO UNTIL Recordset.EOF
 				memberType = Recordset.Fields("MemberType").value
 				logoPath = Recordset.Fields("LogoPath").value
@@ -305,83 +326,111 @@ Function GetVendorDetails(id)
 				contactPhone = Recordset.Fields("ContactPhone").value
 				companyFax = Recordset.Fields("CompanyFax").value
 				companyUrl = Recordset.Fields("CompanyURL").value
-				IF isPreferred = true THEN
-					strSB = strSB & "<div><b>IFA Preferred Vendor</b></div><br/>"
-				ELSE
-				IF logoPath <> "" THEN
-					strSB = strSB & "<div><img src='"&logoPath&"'/></div><br/>"
-				END IF
 				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
+					IF isPreferred = true THEN
+						strSB = strSB & "<div><b>IFA Preferred Vendor</b></div><br/>"
+					END IF
+					IF logoPath <> "" THEN
+						strSB = strSB & "<div><img src='"&logoPath&"'/></div><br/>"
+					END IF				
 					'company name and address
 					strSB = strSB & "<div>"
 					strSB = strSB & "<b>"&companyName&"</b><br/>"
-					strSB = strSB & address&"br/"
+					strSB = strSB & address&"<br/>"
 					strSB = strSB & cityStateZip & "<br/>"
 					strSB = strSB & country
 					strSB = strSB & "</div>"
 					'company information in short
+					IF companyInformation <> "" THEN
 					strSB = strSB & "<div>"
 					strSB = strSB & "<b>Company Info:</b><br/>"
 					strSB = strSB & companyInformation
 					strSB = strSB & "</div>"
+					END IF
 					'specialty
+					IF specialty <> "" THEN
 					strSB = strSB & "<div>"
 					strSB = strSB & "<b>Specialty:</b><br/>"
 					strSB = strSB & specialty
 					strSB = strSB & "</div>"
+					END IF
 					'General comments
+					IF generalComments <> "" THEN
 					strSB = strSB & "<div>"
 					strSB = strSB & "<b>General Comments:</b><br/>"
 					strSB = strSB & companyInformation
 					strSB = strSB & "</div>"
-				END IF
-				' members contact information
-				strSB = strSB & "<div>"
-				strSB = strSB & "<b>Member(s):</b><br/>"
+					END IF
+					
+					' members contact information
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Member(s):</b><br/>"
+				END IF				
 				
-				strSB = strSB & contactName & "<br/>"
-				strSB = strSB & "Email: "&contactEmail & "<br/>"
-				strSB = strSB & "Phone: "&contactPhone & "<br/>"
+					strSB = strSB & contactName & "<br/>"
+					strSB = strSB & "Email: "&contactEmail & "<br/>"
+					strSB = strSB & "Phone: "&contactPhone & "<br/>"
 				
-				strSB = strSB & "</div>"
-				
-				'Contact info of the vendor
-				strSB = strSB & "<div>"
-				strSB = strSB & "<b>Contact Info:</b><br/>"
-				strSB = strSB & "Fax: "& companyFax & "<br/>"
-				strSB = strSB & "URL: "& companyUrl & "<br/>"
-				strSB = strSB & "</div>"
-			LOOP			
-		end if
-		IF count = 2  THEN
-			DO UNTIL Recordset.EOF
-				specialtyName = Recordset.Fields("SpecialtyName").value
-				
-				IF specialtyCounter = 1 then 
-				strSB = strSB & "<div>"
-				strSB = strSB & "<b>Contact Info:</b><br/>"
-				End if
-				
-				strSB = strSB & specialtyName & "<br/>"
-				
-				IF specialtyCounter = 1 then 'Todo: when last record need to execute this
-				strSB = strSB & "</div>"
-				specialtyCounter = specialtyCounter + 1
+				IF primaryRecordsetCounter = counts(count-1) THEN ' in last iteration close the div
+					strSB = strSB & "</div>"
 				END IF
 				
+				IF primaryRecordsetCounter = counts(count-1) AND (companyFax <> "" OR companyUrl <> "")THEN
+					'Contact info of the vendor
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Contact Info:</b><br/>"
+					IF companyFax <> "" THEN
+						strSB = strSB & "Fax: "& companyFax & "<br/>"
+					END IF
+					IF companyUrl <> "" THEN
+						strSB = strSB & "URL: "& companyUrl & "<br/>"
+					END IF
+					strSB = strSB & "</div>"
+				END IF				
+				primaryRecordsetCounter = primaryRecordsetCounter + 1
+				Recordset.MoveNext
 			LOOP			
 		END IF
-		IF count = 3 THEN
+		IF count = 2  THEN			
+			DO UNTIL Recordset.EOF
+				specialtyName = Recordset.Fields("SpecialtyName").value
+				IF counts(count-1) > 0 THEN 'if there are any specialties then only show it.
+					IF specialtyCounter = 1 then 'when first record execute this
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Specialties:</b><br/>"
+					End if
+					
+					strSB = strSB & specialtyName & "<br/>"
+					
+					IF specialtyCounter = counts(count-1) then 'when last record need to execute this
+					strSB = strSB & "</div>"				
+					END IF
+				END IF
+				specialtyCounter = specialtyCounter + 1
+				Recordset.MoveNext
+			LOOP					
+		END IF
+		IF count = 3 THEN			
 			DO UNTIL Recordset.EOF
 				practicingState = Recordset.Fields("PracticingState").value
-				strSB = strSB & "<div>"
-				strSB = strSB & "<b>Other Locations:</b><br/>"
-				strSB = strSB & practicingState & "<br/>"
-				strSB = strSB & "</div>"
+				IF counts(count-1) > 0 THEN ' if there are some practicing state(s) then only show it
+					IF practicingStatesCounter = 1 THEN
+					strSB = strSB & "<div>"
+					strSB = strSB & "<b>Other Locations:</b><br/>"
+					END IF					
+					
+					strSB = strSB & practicingState & "<br/>"
+					
+					IF practicingStatesCounter = counts(count-1) THEN				
+					strSB = strSB & "</div>"
+					END IF
+				END IF				
+				practicingStatesCounter = practicingStatesCounter + 1
+				Recordset.MoveNext
 			LOOP			
 		END IF
 		IF count = 4 THEN			
-			IF NOT Recordset.EOF
+			IF NOT Recordset.EOF THEN
 				
 				recommended = Recordset.Fields("Recommended").value
 				recommFirmAttorney = Recordset.Fields("RecommFirmAtorney").value
@@ -389,26 +438,40 @@ Function GetVendorDetails(id)
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
-				if showRecomInfo = "1" then
-					strSB = strSB & "<div>"
-					IF recommended = "Yes" Then
-						strSB = strSB & "<b>Recommended Firm or Attorney:</b><br/>"
-						strSB = strSB & recommFirmAttorney & "<br/>"
-					end if
-					strSB = strSB & "<b>Years Service Used:</b><br/>"
-					strSB = strSB & yearsServiceUsed & "<br/>"
-					strSB = strSB & "<b>Comments:</b><br/>"
-					strSB = strSB & recommComment & "<br/>"
-					strSB = strSB & "<b>Recommended By:</b><br/>"
-					strSB = strSB & recommComment & "<br/>"
-				end if
-			End if
-		END IF
+				IF recommended = "Yes" THEN
+					
+					strSB = strSB & "<div>"					
+					'IF showRecomInfo = 1 THEN
+						IF recommFirmAttorney <> "" THEN
+							strSB = strSB & "<b>Recommended Firm or Attorney:</b><br/>"
+							strSB = strSB & recommFirmAttorney & "<br/>"
+						END IF
+					'END IF
+					IF yearsServiceUsed <> "" THEN
+						strSB = strSB & "<b>Years Service Used:</b><br/>"
+						strSB = strSB & yearsServiceUsed & "<br/>"
+					END IF
+					IF comments <> "" THEN
+						strSB = strSB & "<b>Comments:</b><br/>"
+						strSB = strSB & recommComment & "<br/>"
+					END IF
+					IF recommendedBy <> "" THEN
+						strSB = strSB & "<b>Recommended By:</b><br/>"
+						strSB = strSB & recommendedBy & "<br/>"
+					END IF
+					strSB = strSB & "</div>"
+					
+				END IF				
+				Recordset.MoveNext
+			END IF			
+		END IF		
 		count = count + 1
-	LOOP
+		Set Recordset = Recordset.NextRecordset
+	LOOP	
+	GetVendorDetails = strSB
 End Function
 
-'***** nshaik: Loads in an HTML Template that a designer can work on separatly from the programming.
+'***** Loads in an HTML Template that a designer can work on separatly from the programming.
 function GetTemplate2(sTemplateFileName)
       dim fso
       dim f
