@@ -464,10 +464,10 @@ Function GetVendorDetails(id)
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
-				IF recommended = "Yes" THEN
+				IF showRecomInfo = 1 THEN
 					
 					strSB = strSB & "<div>"					
-					'IF showRecomInfo = 1 THEN
+					'IF recommended = "Yes" THEN
 						IF recommFirmAttorney <> "" THEN
 							strSB = strSB & "<b>Recommended Firm or Attorney:</b><br/>"
 							strSB = strSB & recommFirmAttorney & "<br/>"
