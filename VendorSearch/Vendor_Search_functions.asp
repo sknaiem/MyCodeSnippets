@@ -123,6 +123,7 @@ Function DoVendorSearch(model)
 	dim prevCountry	
 	dim prevStateOrProvince
 	dim strSB
+	dim count
 	
 	dim categoryID,stateOrProvince,country,specialtyID,searchText,practicingStateID,attorneyName,attorneyFirm
 	dim vendorType, categoryName, state, province, city, companyName,memberId
@@ -164,10 +165,20 @@ Function DoVendorSearch(model)
 	   .Parameters.Append .CreateParameter("@practicingStateID",adInteger,adParamInput,,practicingStateID)
 	   .Parameters.Append .CreateParameter("@name",adVarChar,adParamInput,255,attorneyName)
 	   .Parameters.Append .CreateParameter("@firm",adVarChar,adParamInput,255,attorneyFirm)
-	   set Recordset = .Execute
+	   set Recordset1 = .Execute ' this is for calculating total records count
+	   set Recordset = .Execute 
 	End With
 	
+	count = 0
+	DO UNTIL Recordset1.EOF
+		count = count + 1
+		Recordset1.MoveNext
+	LOOP
+	
 	strSB = strSB & "<table>"
+	IF count <= 0 THEN ' if results returned then display the following message
+		strSB = strSB & "<tr><td>Sorry no vendors matched your search criteria.</td></tr>"
+	END IF
 	
 	DO UNTIL Recordset.EOF		
 		vendorType = Recordset.Fields("VendorType").value
@@ -223,7 +234,18 @@ Function DoVendorSearch(model)
 					end if
 		strSB = strSB & "<tr><td>"
 		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a href='Details.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
-		strSB = strSB & city&","&state&","&country&"</div>"
+		IF city <> "" THEN
+			strSB = strSB & city & ","
+		END IF
+		IF state <> "--" THEN
+			strSB = strSB & state & ","
+		ELSEIF province <> "" THEN
+			strSB = strSB & province & ","
+		END IF
+		IF country <> "" THEN
+			strSB = strSB & country
+		END IF
+		strSB = strSB & "</div>"
 		strSB = strSB & "</td></tr>"
 		Recordset.MoveNext
 	LOOP
@@ -232,6 +254,7 @@ Function DoVendorSearch(model)
 	'Clean up
 	set cmd = nothing
 	set Recordset = nothing
+	set Recordset1 = nothing
 End Function
 
 function populateSearchPage()
@@ -306,7 +329,10 @@ Function GetVendorDetails(id)
         Loop
         Set Recordset1 = Recordset1.NextRecordset
         count = count + 1
-    Loop	
+    Loop
+	IF counts(0)<=0 THEN ' no data can be found related to vendor
+		strSB =  strSB & "<div>Sorry no vendors matched your search criteria.</div>"
+	END IF
 	count = 1
 	Do UNTIL Recordset IS NOTHING
 		if count = 1 then			

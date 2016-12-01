@@ -178,7 +178,6 @@ Sub BreadCrumbs()
 
 <div id="SearchResults">
 <%=strDisplay %>
-<%="All:"&all%>
 </div>
 
 	
