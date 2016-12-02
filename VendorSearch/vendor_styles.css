@@ -1,0 +1,63 @@
+.vendor_searchresults
+{
+	
+}
+.vendor_nodata
+{
+	
+}
+.vendor_heading
+{
+	background:#2659B6
+}
+.vendor_category
+{
+	background: tan
+}
+.vendor_country
+{
+	padding:4px;
+}
+.vendor_state
+{
+	padding-top:10px;
+}
+.vendor_info
+{
+	padding:6px 0 6px 40px; 
+	width:660px;
+}
+/*vendor details page */
+.vendor_preferred
+{
+	font:bold;
+}
+.vendor_logo
+{
+	
+}
+.vendor_demographics
+{
+	
+}
+.vendor_spacialty
+{
+	
+}
+.vendor_comments
+{}
+.vendor_members
+{}
+.vendor_contactinfo
+{}
+.attorney_specialties
+{}
+.attorney_practicing_states
+{}
+.attorney_recommendation
+{}
+.vendor_state_province select[disabled]
+{
+	background-color:#eeeeee;
+}
+

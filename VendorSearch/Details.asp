@@ -3,15 +3,15 @@
 
 <% 'nshaik: Case 638 - TL - IMP CUSTOM WORK: IFA Vendor Search %>
 <!--#include file="../IFAConnection.asp" -->
-<!--#include file="../../includes/control.asp"-->
-<!--#include file="../../includes/siteaccess.asp"-->
-<!--#include file="../../includes/staticcm.asp"-->
-<!--#include file="../../includes/custom_cfcc.asp"-->
-<!--#include file="../../includes/advertising.asp"-->
-<!--#include file="../../includes/rotate_sub.asp"-->
-<!--#include file="../../includes/displayformatteditem2.asp"-->
-<!--#include file="../../includes/member_directory.asp"-->
-<!--#include file="../../includes/member_control.asp"-->
+<!--#include file="../includes/control.asp"-->
+<!--#include file="../includes/siteaccess.asp"-->
+<!--#include file="../includes/staticcm.asp"-->
+<!--#include file="../includes/custom_cfcc.asp"-->
+<!--#include file="../includes/advertising.asp"-->
+<!--#include file="../includes/rotate_sub.asp"-->
+<!--#include file="../includes/displayformatteditem2.asp"-->
+<!--#include file="../includes/member_directory.asp"-->
+<!--#include file="../includes/member_control.asp"-->
 <!--#include file="Vendor_Search_functions.asp" -->
 
 <%
@@ -129,6 +129,6 @@ Sub BreadCrumbs()
 
 
 
-<!--#include file="../../designtemplate.asp"-->				
+<!--#include file="../designtemplate.asp"-->				
 
      

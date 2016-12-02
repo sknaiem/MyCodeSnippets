@@ -42,12 +42,12 @@ all = trim(Request.Form("all"))
 Basic_category = trim(Request.Form("Basic_category")) 
 Basic_state = trim(Request.Form("Basic_state")) 
 Basic_country = trim(Request.Form("Basic_country")) 
-Basic_Keyword_Search = trim(Request.Form("Basic_Keyword_Search")) 
+Basic_Keyword_Search = Replace(trim(Request.Form("Basic_Keyword_Search")),"'","''") 
 '---
  
 '[Attorney Specific Information Search] 
-ATTNY_NAME = trim(Request.Form("ATTNY_NAME")) 
-ATTNY_FIRM = trim(Request.Form("ATTNY_FIRM")) 
+ATTNY_NAME = Replace(trim(Request.Form("ATTNY_NAME")),"'","''") 
+ATTNY_FIRM = Replace(trim(Request.Form("ATTNY_FIRM")),"'","''") 
 ATTNY_STATE = trim(Request.Form("ATTNY_STATE"))
 ATTNY_SPECIALTY = trim(Request.Form("ATTNY_SPECIALTY")) 
 '---

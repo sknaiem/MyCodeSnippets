@@ -161,10 +161,10 @@ Function DoVendorSearch(model)
 	   .Parameters.Append .CreateParameter("@stateProvince",adVarChar,adParamInput,50,stateOrProvince)
 	   .Parameters.Append .CreateParameter("@country",adVarChar,adParamInput,50,country)
 	   .Parameters.Append .CreateParameter("@specialtyID",adInteger,adParamInput,,specialtyID)
-	   .Parameters.Append .CreateParameter("@searchText",adVarChar,adParamInput,255,searchText)
+	   .Parameters.Append .CreateParameter("@searchText",adVarChar,adParamInput,100,searchText)
 	   .Parameters.Append .CreateParameter("@practicingStateID",adInteger,adParamInput,,practicingStateID)
-	   .Parameters.Append .CreateParameter("@name",adVarChar,adParamInput,255,attorneyName)
-	   .Parameters.Append .CreateParameter("@firm",adVarChar,adParamInput,255,attorneyFirm)
+	   .Parameters.Append .CreateParameter("@name",adVarChar,adParamInput,100,attorneyName)
+	   .Parameters.Append .CreateParameter("@firm",adVarChar,adParamInput,100,attorneyFirm)
 	   set Recordset1 = .Execute ' this is for calculating total records count
 	   set Recordset = .Execute 
 	End With
@@ -175,9 +175,9 @@ Function DoVendorSearch(model)
 		Recordset1.MoveNext
 	LOOP
 	
-	strSB = strSB & "<table>"
+	strSB = strSB & "<table class='vendor_searchresults'>"
 	IF count <= 0 THEN ' if results returned then display the following message
-		strSB = strSB & "<tr><td>Sorry no vendors matched your search criteria.</td></tr>"
+		strSB = strSB & "<tr class='nodata'><td>Sorry no vendors matched your search criteria.</td></tr>"
 	END IF
 	
 	DO UNTIL Recordset.EOF		
@@ -191,49 +191,49 @@ Function DoVendorSearch(model)
 		memberId = Recordset.Fields("MemberID").value
 		
 		if vendorType = "Preferred Vendor" and isPreferredVendorSet = false then
-			strSB = strSB & "<tr style='background: #2659B6;'><td>IFA Preferred Vendor</td></tr>"
+			strSB = strSB & "<tr class='vendor_heading'><td>IFA Preferred Vendor</td></tr>"
 			isPreferredVendorSet = true
 			prevCategory = ""'reset the previous category everytime vendor type changes
 		end if
 		if vendorType = "Vendor" and isVendorSet = false then
-			strSB = strSB & "<tr style='background: #2659B6;'><td>IFA Vendor</td></tr>"
+			strSB = strSB & "<tr class='vendor_heading'><td>IFA Vendor</td></tr>"
 			isVendorSet = true
 			prevCategory = ""'reset the previous category everytime vendor type changes
 		end if
 		'within  vendor type vendorcategories should not repeat
 			if prevCategory = "" or (prevCategory <> "" and categoryName <> prevCategory) then
 				if categoryName <> "" then
-					strSB = strSB & "<tr style='background: tan'><td>"&categoryName&"</td></tr>"
+					strSB = strSB & "<tr class='vendor_category'><td>"&categoryName&"</td></tr>"
 					prevCategory = categoryName					
 				end if
 				prevCountry = ""'reset the previous preferred country everytime the category is changed
 			end if
 		' within vendorcategory countries should not repeat
 				if prevCountry = "" or (prevCountry <> "" and country <> prevCountry) then
-					strSB = strSB & "<tr><td style='padding:4px;'><h2>"&country&"</h2></td></tr>"
+					strSB = strSB & "<tr><td class='vendor_country'><h2>"&country&"</h2></td></tr>"
 					prevCountry = country
 					prevStateOrProvince=""
 				end if
 		'within a country the state or province name should not repeat
 					if prevStateOrProvince = "" then
 						if state <> "--" then
-							strSB = strSB & "<tr><td style='padding-top:10px;'>"&state&"</td></tr>"
+							strSB = strSB & "<tr><td class='vendor_state'>"&state&"</td></tr>"
 							prevStateOrProvince = state
 						elseif province <> "" then
-							strSB = strSB & "<tr><td style='padding-top:10px;'>"&province&"</td></tr>"
+							strSB = strSB & "<tr><td class='vendor_state'>"&province&"</td></tr>"
 							prevStateOrProvince = province
 						end if			
 					elseif prevStateOrProvince <> "" and state <> prevStateOrProvince then
 						if state <> "--" then
-							strSB = strSB & "<tr><td style='padding-top:10px;'>"&state&"</td></tr>"
+							strSB = strSB & "<tr><td class='vendor_state'>"&state&"</td></tr>"
 							prevStateOrProvince = state
 						elseif province <> "" and state <> prevStateOrProvince then
-							strSB = strSB & "<tr><td style='padding-top:10px;'>"&province&"</td></tr>"
+							strSB = strSB & "<tr><td class='vendor_state'>"&province&"</td></tr>"
 							prevStateOrProvince = province
 						end if			
 					end if
 		strSB = strSB & "<tr><td>"
-		strSB = strSB & "<div style='padding:6px 0 6px 40px; width:660px;'><a href='Details.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
+		strSB = strSB & "<div class='vendor_info'><a href='Details.asp?ID="&memberId&"'>"&companyName&"</a><br/>"
 		IF city <> "" THEN
 			strSB = strSB & city & ","
 		END IF
@@ -354,13 +354,13 @@ Function GetVendorDetails(id)
 				companyUrl = Recordset.Fields("CompanyURL").value
 				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
 					IF isPreferred = true THEN
-						strSB = strSB & "<div><b>IFA Preferred Vendor</b></div><br/>"
+						strSB = strSB & "<div class='vendor_preferred'>IFA Preferred Vendor</div><br/>"
 					END IF
 					IF logoPath <> "" THEN
-						strSB = strSB & "<div><img src='"&logoPath&"'/></div><br/>"
+						strSB = strSB & "<div class='vendor_logo'><img src='"&logoPath&"'/></div><br/>"
 					END IF				
 					'company name and address
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_demographics'>"
 					strSB = strSB & "<b>"&companyName&"</b><br/>"
 					strSB = strSB & address&"<br/>"
 					strSB = strSB & cityStateZip & "<br/>"
@@ -368,28 +368,28 @@ Function GetVendorDetails(id)
 					strSB = strSB & "</div>"
 					'company information in short
 					IF companyInformation <> "" THEN
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_info'>"
 					strSB = strSB & "<b>Company Info:</b><br/>"
 					strSB = strSB & companyInformation
 					strSB = strSB & "</div>"
 					END IF
 					'specialty
 					IF specialty <> "" THEN
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_spacialty'>"
 					strSB = strSB & "<b>Specialty:</b><br/>"
 					strSB = strSB & specialty
 					strSB = strSB & "</div>"
 					END IF
 					'General comments
 					IF generalComments <> "" THEN
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_comments'>"
 					strSB = strSB & "<b>General Comments:</b><br/>"
 					strSB = strSB & companyInformation
 					strSB = strSB & "</div>"
 					END IF
 					
 					' members contact information
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_members'>"
 					strSB = strSB & "<b>Member(s):</b><br/>"
 				END IF				
 				
@@ -403,7 +403,7 @@ Function GetVendorDetails(id)
 				
 				IF primaryRecordsetCounter = counts(count-1) AND (companyFax <> "" OR companyUrl <> "")THEN
 					'Contact info of the vendor
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='vendor_contactinfo'>"
 					strSB = strSB & "<b>Contact Info:</b><br/>"
 					IF companyFax <> "" THEN
 						strSB = strSB & "Fax: "& companyFax & "<br/>"
@@ -422,7 +422,7 @@ Function GetVendorDetails(id)
 				specialtyName = Recordset.Fields("SpecialtyName").value
 				IF counts(count-1) > 0 THEN 'if there are any specialties then only show it.
 					IF specialtyCounter = 1 then 'when first record execute this
-					strSB = strSB & "<div>"
+					strSB = strSB & "<div class='attorney_specialties'>"
 					strSB = strSB & "<b>Specialties:</b><br/>"
 					End if
 					
@@ -441,8 +441,8 @@ Function GetVendorDetails(id)
 				practicingState = Recordset.Fields("PracticingState").value
 				IF counts(count-1) > 0 THEN ' if there are some practicing state(s) then only show it
 					IF practicingStatesCounter = 1 THEN
-					strSB = strSB & "<div>"
-					strSB = strSB & "<b>Other Locations:</b><br/>"
+					strSB = strSB & "<div class='attorney_practicing_states'>"
+					strSB = strSB & "<b>Practicing State(s):</b><br/>"
 					END IF					
 					
 					strSB = strSB & practicingState & "<br/>"
@@ -464,9 +464,9 @@ Function GetVendorDetails(id)
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
-				IF showRecomInfo = 1 THEN
+				IF recommended = "Yes" THEN
 					
-					strSB = strSB & "<div>"					
+					strSB = strSB & "<div class='attorney_recommendation'>"					
 					'IF recommended = "Yes" THEN
 						IF recommFirmAttorney <> "" THEN
 							strSB = strSB & "<b>Recommended Firm or Attorney:</b><br/>"
