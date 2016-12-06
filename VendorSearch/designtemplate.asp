@@ -280,7 +280,20 @@ Call Javascripts()
 		<script type="text/javascript">
 		 	$(document).ready(function () {
 		 		$('.dropdown-toggle').dropdownHover();
+				$('#Basic_category').change(function(){
+					var optionSelected = $("option:selected",this).val();
+					if(optionSelected === "8"){
+						$('#toggleText').show();
+						$('select[name=Basic_state]').prop('disabled',true);
+					}
+					else
+					{
+						$('#toggleText').hide();
+						$('select[name=Basic_state]').prop('disabled',false);
+					}
+				});
 		 });
+		 
 		</script>
 
 	</body>

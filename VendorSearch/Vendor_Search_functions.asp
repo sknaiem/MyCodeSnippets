@@ -227,7 +227,7 @@ Function DoVendorSearch(model)
 						if state <> "--" then
 							strSB = strSB & "<tr><td class='vendor_state'>"&state&"</td></tr>"
 							prevStateOrProvince = state
-						elseif province <> "" and state <> prevStateOrProvince then
+						elseif province <> "" and province <> prevStateOrProvince then
 							strSB = strSB & "<tr><td class='vendor_state'>"&province&"</td></tr>"
 							prevStateOrProvince = province
 						end if			
