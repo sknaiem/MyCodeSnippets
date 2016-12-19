@@ -640,37 +640,37 @@ Function GetVendorDetailsForEdit(id)
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Address:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtAddress' value='"&address&"' />"
+					strSB = strSB & address'"<input type='text' name='txtAddress' value='"&address&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>City, State, Zip:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtCityStateZip' value='"&cityStateZip&"' />"
+					strSB = strSB & cityStateZip'"<input type='text' name='txtCityStateZip' value='"&cityStateZip&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Country:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtCountry' value='"&country&"' />"
+					strSB = strSB & country'"<input type='text' name='txtCountry' value='"&country&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Company Information:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtCompanyInformation' value='"&companyInformation&"' />"
+					strSB = strSB & companyInformation'"<input type='text' name='txtCompanyInformation' value='"&companyInformation&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Specialty:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtSpecialty' value='"&specialty&"' />"
+					strSB = strSB & specialty'"<input type='text' name='txtSpecialty' value='"&specialty&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>General Comments:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtGeneralComments' value='"&generalComments&"' />"
+					strSB = strSB & generalComments'"<input type='text' name='txtGeneralComments' value='"&generalComments&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
@@ -682,25 +682,25 @@ Function GetVendorDetailsForEdit(id)
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Contact Email:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtContactEmailPrimary' value='"&contactEmail&"' />"
+					strSB = strSB & contactEmail'"<input type='text' name='txtContactEmailPrimary' value='"&contactEmail&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Contact Phone:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtContactPhonePrimary' value='"&contactPhone&"' />"
+					strSB = strSB & contactPhone'"<input type='text' name='txtContactPhonePrimary' value='"&contactPhone&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Company Fax:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtCompanyFax' value='"&companyFax&"' />"
+					strSB = strSB & companyFax'"<input type='text' name='txtCompanyFax' value='"&companyFax&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					strSB = strSB & "<div class='row'>"
 					strSB = strSB & "<span class='LeftControl'>Company url:</span>"
 					strSB = strSB & "<span class='RightControl'>"
-					strSB = strSB & "<input type='text' name='txtCompanyUrl' value='"&companyUrl&"' />"
+					strSB = strSB & companyUrl'"<input type='text' name='txtCompanyUrl' value='"&companyUrl&"' />"
 					strSB = strSB & "</span>"
 					strSB = strSB & "</div>"
 					' 'company name and address
@@ -805,10 +805,188 @@ Function GetVendorDetailsForEdit(id)
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
 				IF isAttorney THEN
-					strSB = strSB & strRecommendationsTemplate
+					strSB = strSB & strRecommendationsTemplate					
 					strSB = Replace(strSB,"[RECOMMENDED_BY]",recommendedBy)
 					strSB = Replace(strSB,"[RECOMMENDER_COMPANY]",recommendedBy)'TODO: I don't have recommendor company info yet
 					strSB = Replace(strSB,"[REC_COMMENTS]",recommComment)
+					IF UCase(recommended) = "YES" THEN
+						strSB = Replace(strSB,"[RECOMMENDED_YES]","checked=""checked""")
+						strSB = Replace(strSB,"[RECOMMENDED_NO]","")
+					Else
+						strSB = Replace(strSB,"[RECOMMENDED_NO]","checked=""checked""")
+						strSB = Replace(strSB,"[RECOMMENDED_YES]","")
+					END IF
+					IF UCase(yearsServiceUsed) = "20+ YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","selected")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "15+ YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","selected")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "10+ YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","selected")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "9 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","selected")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "8 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","selected")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "7 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","selected")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "6 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","selected")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "5 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","selected")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "4 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","selected")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "3 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","selected")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "2 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","selected")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					ELSEIF UCase(yearsServiceUsed) = "1 YEARS" THEN
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","selected")
+					Else						
+						strSB = Replace(strSB,"[20_YEAR]","")
+						strSB = Replace(strSB,"[15_YEAR]","")
+						strSB = Replace(strSB,"[10_YEAR]","")
+						strSB = Replace(strSB,"[9_YEAR]","")
+						strSB = Replace(strSB,"[8_YEAR]","")
+						strSB = Replace(strSB,"[7_YEAR]","")
+						strSB = Replace(strSB,"[6_YEAR]","")
+						strSB = Replace(strSB,"[5_YEAR]","")
+						strSB = Replace(strSB,"[4_YEAR]","")
+						strSB = Replace(strSB,"[3_YEAR]","")
+						strSB = Replace(strSB,"[2_YEAR]","")
+						strSB = Replace(strSB,"[1_YEAR]","")
+					END IF
+						
 				END IF
 				Recordset.MoveNext
 			END IF			
@@ -838,24 +1016,24 @@ Function GetLogoUploadControl(memberId)
 	GetLogoUploadControl = strSB	
 End Function
 
-Function UpdateVendor(model)
-	UpdateVendor = false
+Function AddOrUpdateVendorDetails(model)
+	AddOrUpdateVendorDetails = false
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "SaveVendor" ' Set the name of the Stored Procedure to use 
-	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@CategoryID",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@ServiceYearsID",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@RecommendedFirm",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@RecommendedAttorney",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@RecommendedBy",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@ShowRecomInfo",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@RecommComment",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@LogoPath",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@Specialties",adInteger,adParamInput,,id)
-	   .Parameters.Append .CreateParameter("@PracticingState",adInteger,adParamInput,,id)	   
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,model(0))
+	   .Parameters.Append .CreateParameter("@CategoryID",adInteger,adParamInput,,model(1))
+	   .Parameters.Append .CreateParameter("@ServiceYearsID",adInteger,adParamInput,,model(2))
+	   .Parameters.Append .CreateParameter("@RecommendedFirm",adBoolean,adParamInput,,model(3))
+	   .Parameters.Append .CreateParameter("@RecommendedAttorney",adBoolean,adParamInput,,model(4))
+	   .Parameters.Append .CreateParameter("@RecommendedBy",adVarChar,adParamInput,500,model(5))
+	   .Parameters.Append .CreateParameter("@ShowRecomInfo",adBoolean,adParamInput,,model(6))
+	   .Parameters.Append .CreateParameter("@RecommComment",adVarChar,adParamInput,500,model(7))
+	   .Parameters.Append .CreateParameter("@LogoPath",adVarChar,adParamInput,255,model(8))
+	   .Parameters.Append .CreateParameter("@Specialties",adVarChar,adParamInput,255,model(9))
+	   .Parameters.Append .CreateParameter("@PracticingState",adVarChar,adParamInput,255,model(10))	   
 		
 	   .Execute
 	End With
@@ -863,12 +1041,11 @@ Function UpdateVendor(model)
 	If Err.number <> 0 Then
 		err.Clear 
 	Else
-		UpdateVendor = TRUE
+		AddOrUpdateVendorDetails = TRUE
 	End If
 	
 	Set cmd.ActiveConnection = Nothing
-    If Not cmd Is Nothing then Set cmd = Nothing
-	
+    If Not cmd Is Nothing then Set cmd = Nothing	
 End Function
 
 Function DeleteVendor(vendorId)

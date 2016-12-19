@@ -13,22 +13,69 @@ vendorID = trim(Request.QueryString("ID"))
 '_________________________________________
 
 '******************************* Page Processing '*******************************
-process = trim(Request.Form("process"))
-IF process = 1 THEN
+process = Request.Form("process")
+IF process THEN
+	dim specialties,i,pipeDelimitedSpecialties,pipeDelimitedStates,isSavedSuccessfully
+	specialties = split(trim(Request.Form("ATTNY_SPECIALTY")),",")
+	practStates = split(trim(Request.Form("ATTNY_STATE")),",")
+	FOR i=0 to UBound(specialties)
+		IF i=0 THEN
+			pipeDelimitedSpecialties = specialties(i)
+		ELSE
+			pipeDelimitedSpecialties = pipeDelimitedSpecialties &"|"&specialties(i)
+		END IF
+	Next
+	FOR i=0 to UBound(practStates)
+		IF i=0 THEN
+			pipeDelimitedStates = practStates(i)
+		ELSE
+			pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
+		END IF
+	Next
+	category = trim(Request.Form("Basic_category"))
+	yearsOfServiceUsed = trim(Request.Form("yearsOfServiceUsed"))
+	recommendedFirm = trim(Request.Form("chkFirm"))
+	if len(recommendedFirm)<=0 then
+		recommendedFirm = 0
+	End if	
+	recommendedAttorney = trim(Request.Form("chkAttorney"))
+	if len(recommendedAttorney)<=0 then
+		recommendedAttorney = 0
+	End if	
+	recommendedBy = trim(Request.Form("txtRecommendedBy"))
+	isRecommended = trim(Request.Form("rdoRecommended"))
+	recommendationComments = trim(Request.Form("txtRecommendationComments"))
+	logoPath = trim(Request.Form("logoPath"))
 	dim model(10)
 	model(0) = vendorID
-	model(1) = Request.Form("Basic_category")
-	model(2) = Request.Form("yearsOfServiceUsed")
-	model(3) = Request.Form("chkAttorney")
-	model(4) = Request.Form("chkFirm")
-	model(5) = Request.Form("txtRecommendedBy")
-	model(6) = Request.Form("rdoRecommended")
-	model(7) = Request.Form("txtRecommendationComments")
-	model(8) = Request.Form("logoPath")
-	model(9) = Request.Form("ATTNY_SPECIALTY")	
-	model(10) = Request.Form("ATTNY_STATE")
-
-	
+	model(1) = category
+	model(2) = yearsOfServiceUsed
+	model(3) = recommendedFirm
+	model(4) = recommendedAttorney
+	model(5) = recommendedBy
+	model(6) = isRecommended
+	model(7) = recommendationComments
+	model(8) = logoPath
+	model(9) = pipeDelimitedSpecialties
+	model(10) = pipeDelimitedStates
+	'ToDo: Remove later
+	strSB = strSB & "<div><span>Debug information</span><br/>"	
+	strSB = strSB & "<span>VendorID:</span><span>"&model(0)&"</span><br/>"
+	strSB = strSB & "<span>Category:</span><span>"&model(1)&"</span><br/>"
+	strSB = strSB & "<span>ServiceUsed:</span><span>"&model(2)&"</span><br/>"
+	strSB = strSB & "<span>IsFirm:</span><span>"&model(3)&"</span><br/>"
+	strSB = strSB & "<span>IsAttorney:</span><span>"&model(4)&"</span><br/>"
+	strSB = strSB & "<span>RecommendedBy:</span><span>"&model(5)&"</span><br/>"
+	strSB = strSB & "<span>IsRecommended:</span><span>"&model(6)&"</span><br/>"
+	strSB = strSB & "<span>Rec Comments:</span><span>"&model(7)&"</span><br/>"
+	strSB = strSB & "<span>logo Path:</span><span>"&model(8)&"</span><br/>"
+	strSB = strSB & "<span>specialties:</span><span>"&model(9)&"</span><br/>"
+	strSB = strSB & "<span>pract states:</span><span>"&model(10)&"</span><br/>"
+	strDisplay = strSB
+	' TODO: Remove above code
+	isSavedSuccessfully = AddOrUpdateVendorDetails(model)
+	' TODO: show confirmation page.
+	Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
 ELSE
 	IF vendorID <> "" THEN
 		const TEMPLATE_PATH = "templates/"
@@ -68,7 +115,7 @@ float:left;
 <body>
 <!-- #include file="../TL_Header.asp" -->
  <h1>EDIT VENDOR</h1>
-<form name="frmEditVendor" id="frmEditVendor" action="Edit.asp" method="post"> 
+<form name="frmEditVendor" id="frmEditVendor" method="post"> 
 <div id="EditVendor">
 <%=strDisplay %>
 <%
