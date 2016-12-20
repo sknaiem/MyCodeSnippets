@@ -59,19 +59,19 @@ IF process THEN
 	model(9) = pipeDelimitedSpecialties
 	model(10) = pipeDelimitedStates
 	'ToDo: Remove later
-	strSB = strSB & "<div><span>Debug information</span><br/>"	
-	strSB = strSB & "<span>VendorID:</span><span>"&model(0)&"</span><br/>"
-	strSB = strSB & "<span>Category:</span><span>"&model(1)&"</span><br/>"
-	strSB = strSB & "<span>ServiceUsed:</span><span>"&model(2)&"</span><br/>"
-	strSB = strSB & "<span>IsFirm:</span><span>"&model(3)&"</span><br/>"
-	strSB = strSB & "<span>IsAttorney:</span><span>"&model(4)&"</span><br/>"
-	strSB = strSB & "<span>RecommendedBy:</span><span>"&model(5)&"</span><br/>"
-	strSB = strSB & "<span>IsRecommended:</span><span>"&model(6)&"</span><br/>"
-	strSB = strSB & "<span>Rec Comments:</span><span>"&model(7)&"</span><br/>"
-	strSB = strSB & "<span>logo Path:</span><span>"&model(8)&"</span><br/>"
-	strSB = strSB & "<span>specialties:</span><span>"&model(9)&"</span><br/>"
-	strSB = strSB & "<span>pract states:</span><span>"&model(10)&"</span><br/>"
-	strDisplay = strSB
+	' strSB = strSB & "<div><span>Debug information</span><br/>"	
+	' strSB = strSB & "<span>VendorID:</span><span>"&model(0)&"</span><br/>"
+	' strSB = strSB & "<span>Category:</span><span>"&model(1)&"</span><br/>"
+	' strSB = strSB & "<span>ServiceUsed:</span><span>"&model(2)&"</span><br/>"
+	' strSB = strSB & "<span>IsFirm:</span><span>"&model(3)&"</span><br/>"
+	' strSB = strSB & "<span>IsAttorney:</span><span>"&model(4)&"</span><br/>"
+	' strSB = strSB & "<span>RecommendedBy:</span><span>"&model(5)&"</span><br/>"
+	' strSB = strSB & "<span>IsRecommended:</span><span>"&model(6)&"</span><br/>"
+	' strSB = strSB & "<span>Rec Comments:</span><span>"&model(7)&"</span><br/>"
+	' strSB = strSB & "<span>logo Path:</span><span>"&model(8)&"</span><br/>"
+	' strSB = strSB & "<span>specialties:</span><span>"&model(9)&"</span><br/>"
+	' strSB = strSB & "<span>pract states:</span><span>"&model(10)&"</span><br/>"
+	' strDisplay = strSB
 	' TODO: Remove above code
 	isSavedSuccessfully = AddOrUpdateVendorDetails(model)
 	' TODO: show confirmation page.

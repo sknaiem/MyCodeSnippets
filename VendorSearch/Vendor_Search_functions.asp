@@ -1,8 +1,123 @@
 <%
-Function GetVendorCategories()
-	Dim strSB, strSBC
-	strSB = ""
-	strSBC = ""
+' Function GetVendorCategories()
+	' Dim strSB, strSBC
+	' strSB = ""
+	' strSBC = ""
+	' Set cmd = Server.CreateObject("ADODB.Command")
+	' With cmd
+	   ' .ActiveConnection = IFAconn 
+	   ' .CommandType = adCmdStoredProc
+	   ' .CommandText = "VendorCategoryLookup" ' Set the name of the Stored Procedure to use   
+	   ' set Recordset = .Execute
+	' End With
+	
+	' Do UNTIL Recordset.EOF
+		' strSB = strSB & "<option value='" & Recordset.Fields("CategoryID").value & "'>" & Recordset.Fields("CategoryName").value & "</option>"
+		' Recordset.MoveNext
+	' LOOP
+
+	' GetVendorCategories = strSB
+	' 'Clean up
+	' set cmd = nothing
+	' set Recordset = nothing
+' End Function
+
+' Function GetStatesOrProvince()
+	' Dim strSB, strSBC
+	' strSB = ""
+	' strSBC = ""
+	' Set cmd = Server.CreateObject("ADODB.Command")
+	' With cmd
+	   ' .ActiveConnection = IFAconn 
+	   ' .CommandType = adCmdStoredProc
+	   ' .CommandText = "VendorStateProvLookup" ' Set the name of the Stored Procedure to use   
+	   ' set Recordset = .Execute
+	' End With
+
+	' Do UNTIL Recordset.EOF
+		' strSB = strSB & "<option value='" & Recordset.Fields("state").value & "'>" & Recordset.Fields("state").value & "</option>"
+		' Recordset.MoveNext
+	' Loop
+
+	' GetStatesOrProvince = strSB
+	' 'Clean up
+	' set cmd = nothing
+	' set Recordset = nothing
+' End Function
+
+' Function GetCountries()
+	' Dim strSB, strSBC
+	' strSB = ""
+	' strSBC = ""
+	' Set cmd = Server.CreateObject("ADODB.Command")
+	' With cmd
+	   ' .ActiveConnection = IFAconn 
+	   ' .CommandType = adCmdStoredProc
+	   ' .CommandText = "VendorCountryLookup" ' Set the name of the Stored Procedure to use   
+	   ' set Recordset = .Execute
+	' End With
+
+	' Do UNTIL Recordset.EOF
+		' strSB = strSB & "<option value='" & Recordset.Fields("countryname").value & "'>" & Recordset.Fields("countryname").value & "</option>"
+		' Recordset.MoveNext
+	' Loop
+
+	' GetCountries = strSB
+	' 'Clean up
+	' set cmd = nothing
+	' set Recordset = nothing
+' End Function
+
+' Function GetAttorneyPracticingStates()
+	' Dim strSB, strSBC
+	' strSB = ""
+	' strSBC = ""
+	' Set cmd = Server.CreateObject("ADODB.Command")
+	' With cmd
+	   ' .ActiveConnection = IFAconn 
+	   ' .CommandType = adCmdStoredProc
+	   ' .CommandText = "AttorneyPracStateLookup" ' Set the name of the Stored Procedure to use   
+	   ' set Recordset = .Execute
+	' End With
+
+	' Do UNTIL Recordset.EOF
+		' strSB = strSB & "<option value='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
+		' Recordset.MoveNext
+	' Loop
+
+	' GetAttorneyPracticingStates = strSB
+	' 'Clean up
+	' set cmd = nothing
+	' set Recordset = nothing
+' End Function
+
+' Function GetAttorneySpecilaties()
+	' Dim strSB, strSBC
+	' strSB = ""
+	' strSBC = ""
+	' Set cmd = Server.CreateObject("ADODB.Command")
+	' With cmd
+	   ' .ActiveConnection = IFAconn 
+	   ' .CommandType = adCmdStoredProc
+	   ' .CommandText = "AttorneySpecialityLookup" ' Set the name of the Stored Procedure to use   
+	   ' set Recordset = .Execute
+	' End With
+
+	' DO UNTIL Recordset.EOF
+		' strSB = strSB & "<option value='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"
+		' Recordset.MoveNext
+	' Loop
+
+	' GetAttorneySpecilaties = strSB
+	' 'Clean up
+	' set cmd = nothing
+	' set Recordset = nothing
+' End Function
+
+Function GetVendorCategories(categorySelected)
+	Dim strSB 
+	strSB = ""	
+	categoryID = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -12,7 +127,12 @@ Function GetVendorCategories()
 	End With
 	
 	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option value='" & Recordset.Fields("CategoryID").value & "'>" & Recordset.Fields("CategoryName").value & "</option>"
+		categoryID = Recordset.Fields("CategoryID").value
+		IF (categorySelected <> "" OR categorySelected <> NULL) AND categorySelected = categoryID THEN
+			strSB = strSB & "<option value='" & categoryID & "' selected>" & Recordset.Fields("CategoryName").value & "</option>"
+		ELSE
+		strSB = strSB & "<option value='" & categoryID & "'>" & Recordset.Fields("CategoryName").value & "</option>"
+		END IF
 		Recordset.MoveNext
 	LOOP
 
@@ -23,9 +143,8 @@ Function GetVendorCategories()
 End Function
 
 Function GetStatesOrProvince()
-	Dim strSB, strSBC
-	strSB = ""
-	strSBC = ""
+	Dim strSB
+	strSB = ""	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -46,9 +165,8 @@ Function GetStatesOrProvince()
 End Function
 
 Function GetCountries()
-	Dim strSB, strSBC
+	Dim strSB
 	strSB = ""
-	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -68,10 +186,10 @@ Function GetCountries()
 	set Recordset = nothing
 End Function
 
-Function GetAttorneyPracticingStates()
-	Dim strSB, strSBC
+Function GetAttorneyPracticingStates(arrPracStates)
+	Dim strSB
 	strSB = ""
-	strSBC = ""
+	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -79,11 +197,28 @@ Function GetAttorneyPracticingStates()
 	   .CommandText = "AttorneyPracStateLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
-
-	Do UNTIL Recordset.EOF
-		strSB = strSB & "<option value='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
-		Recordset.MoveNext
-	Loop
+	IF IsArray(arrPracStates) THEN
+		Do UNTIL Recordset.EOF
+			attorneyLocationName = Recordset.Fields("LocationName").value
+			attorneyLocationID = Recordset.Fields("LocationID").value
+			practStateAdded = false
+			FOR EACH practState IN arrPracStates			
+				IF practState = attorneyLocationID THEN
+					strSB = strSB & "<option value='"& attorneyLocationID &"' selected>" & attorneyLocationName &"</option>"
+					practStateAdded = true				
+				END IF							
+			NEXT
+			IF practStateAdded = false THEN
+				strSB = strSB & "<option value='"& attorneyLocationID &"'>" & attorneyLocationName &"</option>"				
+			END IF
+			Recordset.MoveNext
+		Loop
+	ELSE
+		Do UNTIL Recordset.EOF
+			strSB = strSB & "<option value='"& Recordset.Fields("LocationID").value &"'>" & Recordset.Fields("LocationName").value &"</option>"
+			Recordset.MoveNext
+		Loop
+	END IF
 
 	GetAttorneyPracticingStates = strSB
 	'Clean up
@@ -91,10 +226,10 @@ Function GetAttorneyPracticingStates()
 	set Recordset = nothing
 End Function
 
-Function GetAttorneySpecilaties()
-	Dim strSB, strSBC
+Function GetAttorneySpecialties(arrSpecialties)
+	Dim strSB
 	strSB = ""
-	strSBC = ""
+	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -102,17 +237,35 @@ Function GetAttorneySpecilaties()
 	   .CommandText = "AttorneySpecialityLookup" ' Set the name of the Stored Procedure to use   
 	   set Recordset = .Execute
 	End With
+	IF IsArray(arrSpecialties) THEN ' TODO: if array is empty then this will fail
+		DO UNTIL Recordset.EOF
+			specialtyName = Recordset.Fields("SpecialtyName").value
+			specialtyID = Recordset.Fields("SpecialtyID").value
+			specialtyAdded = false
+			For Each specialty IN arrSpecialties
+				IF specialty = specialtyID THEN
+					strSB = strSB & "<option value='" & specialtyID & "' selected>"& specialtyName & "</option>"
+					specialtyAdded = true
+				END IF				
+			Next
+			IF specialtyAdded = false Then 
+				strSB = strSB & "<option value='" & specialtyID & "'>"& specialtyName & "</option>"
+			End If
+			Recordset.MoveNext
+		Loop
+	ELSE
+		DO UNTIL Recordset.EOF				
+			strSB = strSB & "<option value='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"				
+			Recordset.MoveNext
+		Loop
+	END IF
 
-	DO UNTIL Recordset.EOF
-		strSB = strSB & "<option value='" & Recordset.Fields("SpecialtyID").value & "'>"& Recordset.Fields("SpecialtyName").value & "</option>"
-		Recordset.MoveNext
-	Loop
-
-	GetAttorneySpecilaties = strSB
+	GetAttorneySpecialties = strSB
 	'Clean up
 	set cmd = nothing
 	set Recordset = nothing
 End Function
+
 
 ' it does the vendor search
 ' model will have categoryid, stateorprovince, country, specialtyId, searchText, PracticingStateID, name, firm
@@ -259,11 +412,11 @@ End Function
 
 function populateSearchPage()
 	dim vendorCategories, stateOrProvince, countries, attorneyPracticingStates, attorneySpecialties,strSB
-	vendorCategories = GetVendorCategories()
+	vendorCategories = GetVendorCategories("")
 	stateOrProvince = GetStatesOrProvince()
 	countries = GetCountries()
-	attorneyPracticingStates = GetAttorneyPracticingStates()
-	attorneySpecialties = GetAttorneySpecilaties()
+	attorneyPracticingStates = GetAttorneyPracticingStates("")
+	attorneySpecialties = GetAttorneySpecialties("")
     strSB = strSearchTemplate
 	strSB = replace(strSB,"[CategoryOptions]",vendorCategories)
 	strSB = replace(strSB,"[StateProvinceOptions]",stateOrProvince)
@@ -337,6 +490,7 @@ Function GetVendorDetails(id)
 	Do UNTIL Recordset IS NOTHING
 		if count = 1 then			
 			DO UNTIL Recordset.EOF
+				categoryID = Recordset.Fields("CategoryID").value
 				memberType = Recordset.Fields("MemberType").value
 				logoPath = Recordset.Fields("LogoPath").value
 				companyName = Recordset.Fields("CompanyName").value
@@ -352,12 +506,13 @@ Function GetVendorDetails(id)
 				contactPhone = Recordset.Fields("ContactPhone").value
 				companyFax = Recordset.Fields("CompanyFax").value
 				companyUrl = Recordset.Fields("CompanyURL").value
+				imagePath = trim(application("consoleurl"))&"/vendor_logo/"&id&"/"&trim(logoPath)
 				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
 					IF isPreferred = true THEN
 						strSB = strSB & "<div class='vendor_preferred'>IFA Preferred Vendor</div><br/>"
 					END IF
 					IF logoPath <> "" THEN
-						strSB = strSB & "<div class='vendor_logo'><img src='"&logoPath&"'/></div><br/>"
+						strSB = strSB & "<div class='vendor_logo'><img src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div><br/>"
 					END IF				
 					'company name and address
 					strSB = strSB & "<div class='vendor_demographics'>"
@@ -458,14 +613,14 @@ Function GetVendorDetails(id)
 		IF count = 4 THEN			
 			IF NOT Recordset.EOF THEN
 				
-				recommended = Recordset.Fields("Recommended").value
+				'recommended = Recordset.Fields("Recommended").value
 				recommFirmAttorney = Recordset.Fields("RecommFirmAtorney").value
 				yearsServiceUsed = Recordset.Fields("YearsServiceUsed").value
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
-				IF recommended = "Yes" THEN
-					
+				'IF recommended = "Yes" THEN
+				IF categoryID = "8" THEN ' AND showRecomInfo = 1 TODO: this needs to be displayed based on the showrecommendation flag	
 					strSB = strSB & "<div class='attorney_recommendation'>"					
 					'IF recommended = "Yes" THEN
 						IF recommFirmAttorney <> "" THEN
@@ -496,6 +651,304 @@ Function GetVendorDetails(id)
 	LOOP	
 	GetVendorDetails = strSB
 End Function
+
+Function GetVendorDetailsForEdit(id)
+	dim count, primaryRecordsetCounter, specialtyCounter, practicingStatesCounter
+	dim memberType
+	dim strSB
+	dim logoPath
+	dim companyName, address, cityStateZip, country, companyInformation, specialty, contactName, contactEmail,contactPhone, companyFax, companyUrl
+	dim specialtyName
+	dim practicingState
+	dim recommended, recommFirmAttorney, yearsServiceUsed, showRecomInfo, recommComment, recommendedBy
+	dim counts(3)
+	
+	strSB = ""
+	logoPath = ""
+	companyName = ""
+	address=""
+	cityStateZip = ""
+	country = ""
+	companyInformation = ""
+	specialty = ""
+	contactName = ""
+	contactEmail = ""
+	contactPhone = ""
+	companyFax = ""
+	companyUrl = ""
+	specialtyName = ""
+	practicingState = ""
+	recommended =""
+	recommFirmAttorney = ""
+	yearsServiceUsed = ""
+	showRecomInfo = ""
+	recommComment = ""
+	recommendedBy = ""
+	
+	Set cmd = Server.CreateObject("ADODB.Command")
+	With cmd
+	   .ActiveConnection = IFAconn 
+	   .CommandType = adCmdStoredProc
+	   .CommandText = "viewvendor" ' Set the name of the Stored Procedure to use 
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)
+		set Recordset1 = .Execute
+	   set Recordset = .Execute
+	End With
+	count = 1
+	primaryRecordsetCounter = 1
+	specialtyCounter = 0
+	practicingStatesCounter = 0
+	
+	
+	Do Until Recordset1 Is Nothing        
+		counts(count-1)= 0
+        Do Until Recordset1.EOF
+			counts(count-1)= counts(count-1)+1            
+            Recordset1.MoveNext
+        Loop
+        Set Recordset1 = Recordset1.NextRecordset
+        count = count + 1
+    Loop
+	IF counts(0)<=0 THEN ' no data can be found related to vendor
+		strSB =  strSB & "<div>Sorry no vendors matched your search criteria.</div>"
+	END IF
+	count = 1
+	Do UNTIL Recordset IS NOTHING
+		if count = 1 then			
+			DO UNTIL Recordset.EOF
+				memberType = Recordset.Fields("MemberType").value
+				logoPath = Recordset.Fields("LogoPath").value
+				companyName = Recordset.Fields("CompanyName").value
+				isPreferred = instr(1,memberType,"Preferred",1)=1				
+				address = Recordset.Fields("Address").value
+				cityStateZip = Recordset.Fields("CityStateZip").value
+				country = Recordset.Fields("Country").value
+				companyInformation = Recordset.Fields("CompanyInfo").value
+				specialty = Recordset.Fields("Specialties").value
+				generalComments = Recordset.Fields("CompanyInfo").value
+				contactName = Recordset.Fields("ContactName").value
+				contactEmail = Recordset.Fields("ContactEmail").value
+				contactPhone = Recordset.Fields("ContactPhone").value
+				companyFax = Recordset.Fields("CompanyFax").value
+				companyUrl = Recordset.Fields("CompanyURL").value
+				categoryID = Recordset.Fields("CategoryID").value
+				isAttorney = categoryID = "8"
+				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
+					IF isPreferred = true THEN
+						strSB = strSB & "<div class='vendor_preferred'>"&memberType&"</div><br/>"
+						strSB = strSB & GetLogoUploadControl(id)						
+					END IF
+					strSB = strSB & "<div class='row'>"					
+					strSB = strSB & "<span class='LeftControl'>Category:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & "<select name='Basic_category'>"
+					strSB = strSB & GetVendorCategories(categoryID)'[VENDOR_CATEGORY]
+					strSB = strSB & "</select>"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Company:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & companyName
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Address:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & address'"<input type='text' name='txtAddress' value='"&address&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>City, State, Zip:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & cityStateZip'"<input type='text' name='txtCityStateZip' value='"&cityStateZip&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Country:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & country'"<input type='text' name='txtCountry' value='"&country&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Company Information:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & companyInformation'"<input type='text' name='txtCompanyInformation' value='"&companyInformation&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Specialty:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & specialty'"<input type='text' name='txtSpecialty' value='"&specialty&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>General Comments:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & generalComments'"<input type='text' name='txtGeneralComments' value='"&generalComments&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Members(S):</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & contactName
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Contact Email:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & contactEmail'"<input type='text' name='txtContactEmailPrimary' value='"&contactEmail&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Contact Phone:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & contactPhone'"<input type='text' name='txtContactPhonePrimary' value='"&contactPhone&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Company Fax:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & companyFax'"<input type='text' name='txtCompanyFax' value='"&companyFax&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					strSB = strSB & "<div class='row'>"
+					strSB = strSB & "<span class='LeftControl'>Company url:</span>"
+					strSB = strSB & "<span class='RightControl'>"
+					strSB = strSB & companyUrl'"<input type='text' name='txtCompanyUrl' value='"&companyUrl&"' />"
+					strSB = strSB & "</span>"
+					strSB = strSB & "</div>"
+					' 'company name and address
+					' strSB = strSB & "<div class='vendor_demographics'>"
+					' strSB = strSB & "<b>"&companyName&"</b><br/>"
+					' strSB = strSB & address&"<br/>"
+					' strSB = strSB & cityStateZip & "<br/>"
+					' strSB = strSB & country
+					' strSB = strSB & "</div>"
+					' 'company information in short
+					' IF companyInformation <> "" THEN
+					' strSB = strSB & "<div class='vendor_info'>"
+					' strSB = strSB & "<b>Company Info:</b><br/>"
+					' strSB = strSB & companyInformation
+					' strSB = strSB & "</div>"
+					' END IF
+					' 'specialty
+					' IF specialty <> "" THEN
+					' strSB = strSB & "<div class='vendor_spacialty'>"
+					' strSB = strSB & "<b>Specialty:</b><br/>"
+					' strSB = strSB & specialty
+					' strSB = strSB & "</div>"
+					' END IF
+					' 'General comments
+					' IF generalComments <> "" THEN
+					' strSB = strSB & "<div class='vendor_comments'>"
+					' strSB = strSB & "<b>General Comments:</b><br/>"
+					' strSB = strSB & generalComments
+					' strSB = strSB & "</div>"
+					' END IF
+					
+					' ' members contact information
+					' strSB = strSB & "<div class='vendor_members'>"
+					' strSB = strSB & "<b>Member(s):</b><br/>"
+				END IF				
+				
+					' strSB = strSB & contactName & "<br/>"
+					' strSB = strSB & "Email: "&contactEmail & "<br/>"
+					' strSB = strSB & "Phone: "&contactPhone & "<br/>"
+				
+				' IF primaryRecordsetCounter = counts(count-1) THEN ' in last iteration close the div
+					' strSB = strSB & "</div>"
+				' END IF
+				
+				' IF primaryRecordsetCounter = counts(count-1) AND (companyFax <> "" OR companyUrl <> "")THEN
+					' 'Contact info of the vendor
+					' strSB = strSB & "<div class='vendor_contactinfo'>"
+					' strSB = strSB & "<b>Contact Info:</b><br/>"
+					' IF companyFax <> "" THEN
+						' strSB = strSB & "Fax: "& companyFax & "<br/>"
+					' END IF
+					' IF companyUrl <> "" THEN
+						' strSB = strSB & "URL: "& companyUrl & "<br/>"
+					' END IF
+					' strSB = strSB & "</div>"
+				' END IF				
+				primaryRecordsetCounter = primaryRecordsetCounter + 1
+				Recordset.MoveNext
+			LOOP			
+		END IF
+		IF count = 2  THEN
+			dim arrSpecialties(8)
+			DO UNTIL Recordset.EOF				
+				arrSpecialties(specialtyCounter) = Recordset.Fields("SpecialtyID").value
+				specialtyCounter = specialtyCounter + 1
+				Recordset.MoveNext
+			LOOP
+			IF isAttorney THEN
+				strSB = strSB & "<div class='row'>"
+				strSB = strSB & "<span class='LeftControl'>Specialties:</span>"
+				strSB = strSB & "<span class='RightControl'>"
+				strSB = strSB & "<select name='ATTNY_SPECIALTY' multiple>"
+				strSB = strSB & GetAttorneySpecialties(arrSpecialties)
+				strSB = strSB & "</select>"
+				strSB = strSB & "</span></div>"
+			END IF
+		END IF
+		IF count = 3 THEN
+			dim arrPracStates(64)
+			DO UNTIL Recordset.EOF				
+				arrPracStates(practicingStatesCounter) = Recordset.Fields("PracticingStateID").value
+				practicingStatesCounter = practicingStatesCounter + 1
+				Recordset.MoveNext
+			LOOP
+			IF isAttorney THEN
+				strSB = strSB & "<div class='row'>"
+				strSB = strSB & "<span class='LeftControl'>Practicing States:</span>"
+				strSB = strSB & "<span class='RightControl'>"
+				strSB = strSB & "<select name='ATTNY_STATE' multiple>"
+				strSB = strSB & GetAttorneyPracticingStates(arrPracStates)
+				strSB = strSB & "</select>"
+				strSB = strSB & "</span></div>"
+			END IF						
+		END IF					
+					
+		count = count + 1
+		Set Recordset = Recordset.NextRecordset
+	LOOP	
+	GetVendorDetailsForEdit = strSB
+End Function
+
+Function GetLogoUploadControl(memberId)
+	dim strSB
+	dim imagePath,logoFileName
+	strSB = ""
+	imagePath = ""
+	logoFileName = ""	
+	IF IsNumeric(memberId) THEN			
+		Set cmd = Server.CreateObject("ADODB.Command")
+		With cmd
+		   .ActiveConnection = IFAconn 
+		   .CommandType = adCmdStoredProc
+		   .CommandText = "viewvendor" ' Set the name of the Stored Procedure to use 
+		   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,memberId)			
+		   set Recordset = .Execute
+		End With
+		IF NOT Recordset.EOF THEN
+			logoFileName = Recordset("LogoPath")
+			if isnull(logoFileName) or trim(logoFileName)="" then
+			  noLogo=true
+			end if
+			if noLogo then
+				strSB = strSB & "<div class='row'><input onclick='openAddPhoto()' type='button' value='Add Photo/Logo' /></div>"
+			else
+				imagePath = trim(application("consoleurl"))&"/vendor_logo/"&memberId&"/"&trim(logoFileName)
+				strSB = strSB & "<div class='LeftControl'><img class='vendor_logo' src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div>"
+				strSB = strSB & "<div class='LeftControl'><a href='javascript:confirm_delete(""delete_vendor_logo.asp?ID="&memberId&""")'>Delete</a></div>"
+			end if
+		END IF
+	END IF
+	GetLogoUploadControl = strSB	
+End Function
+
 
 '***** Loads in an HTML Template that a designer can work on separatly from the programming.
 function GetTemplate2(sTemplateFileName)

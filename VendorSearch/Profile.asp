@@ -1,20 +1,34 @@
 <%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%> 
 <% Response.CharSet = "UTF-8" %>
-<!--#include file="../console/common.asp"-->
-<!--#include file="../console/TL_Reference.asp"-->
+
+<% 'nshaik: Case 638 - TL - IMP CUSTOM WORK: IFA Vendor Search %>
 <!--#include file="../IFAConnection.asp" -->
-<!--#include file="vendor_search_functions.asp" -->
-<%    
-If NOT trim(session("loggedin"))="True" Then
-	response.redirect trim(application("siteurl"))& "../../login.asp"
+<!--#include file="../includes/control.asp"-->
+<!--#include file="../includes/siteaccess.asp"-->
+<!--#include file="../includes/staticcm.asp"-->
+<!--#include file="../includes/custom_cfcc.asp"-->
+<!--#include file="../includes/advertising.asp"-->
+<!--#include file="../includes/rotate_sub.asp"-->
+<!--#include file="../includes/displayformatteditem2.asp"-->
+<!--#include file="../includes/member_directory.asp"-->
+<!--#include file="../includes/member_control.asp"-->
+<!--#include file="Vendor_Search_functions.asp" -->
+
+<%
+
+
+'Response.Write ("Vendor Search in progress" &  "" & "<br>")
+'Response.End
+
+'can make a function here to check if logged in.
+If trim(session("sa_id"))="" Then
+	response.redirect trim(application("siteurl"))& "/login.asp"
 End If 
-dim strRecommendationsTemplate,memberType
-strRecommendationsTemplate = ""
-memberType = ""
+
 '________________ REQUEST.FORM ________________
-vendorID = trim(Request.QueryString("ID"))
-memberType = trim(Request.QueryString("memberType"))
-'_________________________________________
+vendorID = trim(Session("sa_memberid"))
+'______________________________________________   
+
 
 '******************************* Page Processing '*******************************
 process = Request.Form("process")
@@ -36,19 +50,7 @@ IF process THEN
 			pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
 		END IF
 	Next
-	category = trim(Request.Form("Basic_category"))
-	yearsOfServiceUsed = trim(Request.Form("yearsOfServiceUsed"))
-	recommendedFirm = trim(Request.Form("chkFirm"))
-	if len(recommendedFirm)<=0 then
-		recommendedFirm = 0
-	End if	
-	recommendedAttorney = trim(Request.Form("chkAttorney"))
-	if len(recommendedAttorney)<=0 then
-		recommendedAttorney = 0
-	End if	
-	recommendedBy = trim(Request.Form("txtRecommendedBy"))
-	isRecommended = trim(Request.Form("rdoRecommended"))
-	recommendationComments = trim(Request.Form("txtRecommendationComments"))
+	category = trim(Request.Form("Basic_category"))	
 	logoPath = trim(Request.Form("logoPath"))
 	dim model(10)
 	model(0) = vendorID
@@ -77,27 +79,40 @@ IF process THEN
 	strSB = strSB & "<span>pract states:</span><span>"&model(10)&"</span><br/>"
 	strDisplay = strSB
 	' TODO: Remove above code
-	isSavedSuccessfully = AddOrUpdateVendorDetails(model)
+	'isSavedSuccessfully = AddOrUpdateVendorDetails(model)
 	' TODO: show confirmation page.
-	Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
+	'Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
 ELSE
-	IF vendorID <> "" THEN
-		const TEMPLATE_PATH = "templates/"
-		const ForReading = 1, ForWriting = 2, ForAppending = 8
-		strRecommendationsTemplate = GetTemplate2("vendor_recommendations.htm")
-		
+	IF vendorID <> "" and IsNumeric(vendorID) THEN
 		'If vendorID is provided then call the SP and get data
-		strSB = GetAddvendorPage(memberType)	
-		strDisplay = strSB
+		strSB = GetVendorDetailsForEdit("901")	
+		strDisplay = strSB	
+	ELSE  
+		strDisplay = "Unable to fetch vendor information"
 	END IF
 END IF
+'********************************************************************************
+
+
+Sub ThePageTitle()
+	showcmn "Main Page Title Tag"
+End Sub
+
+Sub Metatags()
+End Sub
+ 
+   
+Sub Javascripts()
+%>
+<%	
+End Sub
+
+Sub HeadCode()
+ custom_head_code 
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><%=TOPS_PAGE_HTML_TITLE%></title>
+<!-- MBELCHER: This is used for our Vendor search template -->
+<link rel="stylesheet" type="text/css" href="templates/vendor_search.css">
 <style>
 div.row
 {
@@ -115,20 +130,42 @@ width:70%;
 float:left;
 }
 </style>
-</head>
-<body>
-<!-- #include file="../TL_Header.asp" -->
- <h1>ADD VENDOR</h1>
-<form name="frmAddVendor" id="frmAddVendor" method="post"> 
-<div id="AddVendor">
+
+<%
+End Sub 
+  
+Sub TopNav()
+	custom_topnav
+End Sub
+
+Sub LeftSide()
+ 	If Len(session("sa_id")) > 0 Then
+		'AF_Menu '...... we are using the custom menu in designtemplate
+	End If
+ ShowLoginBox()
+End Sub                  
+
+Sub BreadCrumbs()
+%>
+ <a href="index.asp">Home</a> > <%=pagetitle%>
+<% End Sub %>          
+
+
+
+<% Sub PageBody() %>
+ 
+
+ <h1>VENDOR PROFILE</h1>
+
+<form name="frmEditProfile" id="frmEditProfile" method="post">
+<div id="VendorProfile">
 <%=strDisplay %>
 </div>
 <input type="hidden" name="process" value="1" />
-<input type="submit" name="btnSaveVendor" value="Save Vendor" />
+<input type="submit" name="btnEditProfile" value="Submit" />
 </form>
-<!-- #include file="../TL_Footer.asp" -->
-</body>
-</html>
+	
+<% End Sub  %>
 <script language="JavaScript" type="text/JavaScript">
 function openAddPhoto(){
 	window.open('addLogo_Vendor.asp?addphoto=1&ID=<%=vendorID%>', 'multiPopup', 'toolbar=no,location=no,status=no,scrollbars=no,menubar=no,width=600,height=500,resizable=no' );
@@ -141,3 +178,8 @@ function confirm_delete(URL)
   }
 }
 </script>
+
+
+<!--#include file="../designtemplate.asp"-->				
+
+     

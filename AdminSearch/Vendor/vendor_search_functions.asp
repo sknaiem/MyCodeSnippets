@@ -1,8 +1,7 @@
 <%
 Function GetVendorCategories(categorySelected)
-	Dim strSB, strSBC
-	strSB = ""
-	strSBC = ""
+	Dim strSB 
+	strSB = ""	
 	categoryID = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
@@ -29,9 +28,8 @@ Function GetVendorCategories(categorySelected)
 End Function
 
 Function GetStatesOrProvince()
-	Dim strSB, strSBC
-	strSB = ""
-	strSBC = ""
+	Dim strSB
+	strSB = ""	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -52,9 +50,8 @@ Function GetStatesOrProvince()
 End Function
 
 Function GetCountries()
-	Dim strSB, strSBC
+	Dim strSB
 	strSB = ""
-	strSBC = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -75,9 +72,9 @@ Function GetCountries()
 End Function
 
 Function GetAttorneyPracticingStates(arrPracStates)
-	Dim strSB, strSBC
+	Dim strSB
 	strSB = ""
-	strSBC = ""
+	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -115,9 +112,9 @@ Function GetAttorneyPracticingStates(arrPracStates)
 End Function
 
 Function GetAttorneySpecialties(arrSpecialties)
-	Dim strSB, strSBC
+	Dim strSB
 	strSB = ""
-	strSBC = ""
+	
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -393,12 +390,13 @@ Function GetVendorDetails(id)
 				contactPhone = Recordset.Fields("ContactPhone").value
 				companyFax = Recordset.Fields("CompanyFax").value
 				companyUrl = Recordset.Fields("CompanyURL").value
+				imagePath = trim(application("consoleurl"))&"/vendor_logo/"&id&"/"&trim(logoPath)
 				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
 					IF isPreferred = true THEN
 						strSB = strSB & "<div class='vendor_preferred'>IFA Preferred Vendor</div><br/>"
 					END IF
 					IF logoPath <> "" THEN
-						strSB = strSB & "<div class='vendor_logo'><img src='"&logoPath&"'/></div><br/>"
+						strSB = strSB & "<div class='vendor_logo'><img src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div><br/>"
 					END IF				
 					'company name and address
 					strSB = strSB & "<div class='vendor_demographics'>"
@@ -506,7 +504,7 @@ Function GetVendorDetails(id)
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
 				'IF recommended = "Yes" THEN
-				IF categoryID = "9" or categoryID = "10" or categoryID = "8" THEN ' 8 needs to be removed but due to data i have added otherwise 9 or 10 means attorney	
+				IF categoryID = "8"  THEN ' AND showRecomInfo = 1 TODO: this needs to be displayed based on the showrecommendation flag
 					strSB = strSB & "<div class='attorney_recommendation'>"					
 					'IF recommended = "Yes" THEN
 						IF recommFirmAttorney <> "" THEN
@@ -605,8 +603,7 @@ Function GetVendorDetailsForEdit(id)
 				memberType = Recordset.Fields("MemberType").value
 				logoPath = Recordset.Fields("LogoPath").value
 				companyName = Recordset.Fields("CompanyName").value
-				isPreferred = instr(1,memberType,"Preferred",1)=1
-				isAttorney = instr(1,memberType,"Attorney",1)> 0
+				isPreferred = instr(1,memberType,"Preferred",1)=1				
 				address = Recordset.Fields("Address").value
 				cityStateZip = Recordset.Fields("CityStateZip").value
 				country = Recordset.Fields("Country").value
@@ -619,6 +616,7 @@ Function GetVendorDetailsForEdit(id)
 				companyFax = Recordset.Fields("CompanyFax").value
 				companyUrl = Recordset.Fields("CompanyURL").value
 				categoryID = Recordset.Fields("CategoryID").value
+				isAttorney = categoryID = "8"
 				IF primaryRecordsetCounter = 1 THEN ' no need to show the same data twice
 					IF isPreferred = true THEN
 						strSB = strSB & "<div class='vendor_preferred'>"&memberType&"</div><br/>"
@@ -1002,20 +1000,33 @@ End Function
 
 Function GetLogoUploadControl(memberId)
 	dim strSB
-	dim imagePath
+	dim imagePath,logoFileName
 	strSB = ""
 	imagePath = ""
-	set rscheckphoto=getrecordset("select * from af_members where userid="&memberId)
-	if isnull(rscheckphoto("photo_link")) or trim(rscheckphoto("photo_link"))="" then
-	  noLogo=true
-	end if
-	if noLogo then
-		strSB = strSB & "<div class='row'><input onclick='openAddPhoto()' type='button' value='Add Photo/Logo' /></div>"
-	else
-		imagePath = trim(application("consoleurl"))&"/vendor_logo/"&memberId&"/"&trim(rscheckphoto("photo_link"))
-		strSB = strSB & "<div class='LeftControl'><img class='vendor_logo' src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div>"
-		strSB = strSB & "<div class='LeftControl'><a href='javascript:confirm_delete(""delete_vendor_logo.asp?ID="&memberId&""")'>Delete</a></div>"
-	end if
+	logoFileName = ""	
+	IF IsNumeric(memberId) THEN			
+		Set cmd = Server.CreateObject("ADODB.Command")
+		With cmd
+		   .ActiveConnection = IFAconn 
+		   .CommandType = adCmdStoredProc
+		   .CommandText = "viewvendor" ' Set the name of the Stored Procedure to use 
+		   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,memberId)			
+		   set Recordset = .Execute
+		End With
+		IF NOT Recordset.EOF THEN
+			logoFileName = Recordset("LogoPath")
+			if isnull(logoFileName) or trim(logoFileName)="" then
+			  noLogo=true
+			end if
+			if noLogo then
+				strSB = strSB & "<div class='row'><input onclick='openAddPhoto()' type='button' value='Add Photo/Logo' /></div>"
+			else
+				imagePath = trim(application("consoleurl"))&"/vendor_logo/"&memberId&"/"&trim(logoFileName)
+				strSB = strSB & "<div class='LeftControl'><img class='vendor_logo' src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div>"
+				strSB = strSB & "<div class='LeftControl'><a href='javascript:confirm_delete(""delete_vendor_logo.asp?ID="&memberId&""")'>Delete</a></div>"
+			end if
+		END IF
+	END IF
 	GetLogoUploadControl = strSB	
 End Function
 
@@ -1074,6 +1085,8 @@ Function DeleteVendor(vendorId)
 End Function
 
 Function GetVendorsDataNotIncludedInVendorDirectory()
+	dim strSB 
+	strSB = ""
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
@@ -1100,7 +1113,7 @@ Function GetVendorsDataNotIncludedInVendorDirectory()
 		strSB = strSB & "<TR>"
 		strSB = strSB & "<TD>"&memberType&"</TD>"
 		strSB = strSB & "<TD>"&Country&"</TD>"
-		strSB = strSB & "<TD><a href=""Add.asp?ID="&memberId&""">"&CompanyName&"</a></TD>"
+		strSB = strSB & "<TD><a href=""Add.asp?ID="&memberId&"&memberType="&memberType&""">"&CompanyName&"</a></TD>"
 		strSB = strSB & "<TD>"&City&"</TD>"
 		strSB = strSB & "<TD>"&State&"</TD>"
 		strSB = strSB & "</TR>"
@@ -1147,7 +1160,11 @@ Function GetVendorMemberDetailsById(id)
 	'TODO: stored proc 'ListVendorsNotInDirectory' can be modified to fetch only the member details by id instead of all the members
 End Function
 
-Function GetAddvendorPage()	
+Function GetAddvendorPage(memberType)		
+	dim strSB,isAttorney
+	strSB = ""
+	isAttorney = false
+	isAttorney = instr(1,memberType,"Attorney",1)>0
 	strSB = strSB & "<div class='row'>"					
 	strSB = strSB & "<span class='LeftControl'>Category:</span>"
 	strSB = strSB & "<span class='RightControl'>"
@@ -1156,7 +1173,7 @@ Function GetAddvendorPage()
 	strSB = strSB & "</select>"
 	strSB = strSB & "</span>"
 	strSB = strSB & "</div>"
-	'if attorney
+	IF isAttorney THEN
 		strSB = strSB & "<div class='row'>"
 		strSB = strSB & "<span class='LeftControl'>Specialties:</span>"
 		strSB = strSB & "<span class='RightControl'>"
@@ -1193,6 +1210,7 @@ Function GetAddvendorPage()
 		strSB = Replace(strSB,"[3_YEAR]","")
 		strSB = Replace(strSB,"[2_YEAR]","")
 		strSB = Replace(strSB,"[1_YEAR]","")
+	END IF
 	GetAddvendorPage = strSB
 END Function
 
