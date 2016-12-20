@@ -91,7 +91,7 @@ Function GetAttorneyPracticingStates(arrPracStates)
 			attorneyLocationID = Recordset.Fields("LocationID").value
 			practStateAdded = false
 			FOR EACH practState IN arrPracStates			
-				IF practState = attorneyLocationName THEN
+				IF practState = attorneyLocationID THEN
 					strSB = strSB & "<option value='"& attorneyLocationID &"' selected>" & attorneyLocationName &"</option>"
 					practStateAdded = true				
 				END IF							
@@ -131,7 +131,7 @@ Function GetAttorneySpecialties(arrSpecialties)
 			specialtyID = Recordset.Fields("SpecialtyID").value
 			specialtyAdded = false
 			For Each specialty IN arrSpecialties
-				IF specialty = specialtyName THEN
+				IF specialty = specialtyID THEN
 					strSB = strSB & "<option value='" & specialtyID & "' selected>"& specialtyName & "</option>"
 					specialtyAdded = true
 				END IF				
@@ -377,6 +377,7 @@ Function GetVendorDetails(id)
 	Do UNTIL Recordset IS NOTHING
 		if count = 1 then			
 			DO UNTIL Recordset.EOF
+				categoryID = Recordset.Fields("CategoryID").value
 				memberType = Recordset.Fields("MemberType").value
 				logoPath = Recordset.Fields("LogoPath").value
 				companyName = Recordset.Fields("CompanyName").value
@@ -498,14 +499,14 @@ Function GetVendorDetails(id)
 		IF count = 4 THEN			
 			IF NOT Recordset.EOF THEN
 				
-				recommended = Recordset.Fields("Recommended").value
+				'recommended = Recordset.Fields("Recommended").value
 				recommFirmAttorney = Recordset.Fields("RecommFirmAtorney").value
 				yearsServiceUsed = Recordset.Fields("YearsServiceUsed").value
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
-				IF recommended = "Yes" THEN
-					
+				'IF recommended = "Yes" THEN
+				IF categoryID = "9" or categoryID = "10" or categoryID = "8" THEN ' 8 needs to be removed but due to data i have added otherwise 9 or 10 means attorney	
 					strSB = strSB & "<div class='attorney_recommendation'>"					
 					'IF recommended = "Yes" THEN
 						IF recommFirmAttorney <> "" THEN
@@ -764,7 +765,7 @@ Function GetVendorDetailsForEdit(id)
 		IF count = 2  THEN
 			dim arrSpecialties(8)
 			DO UNTIL Recordset.EOF				
-				arrSpecialties(specialtyCounter) = Recordset.Fields("SpecialtyName").value
+				arrSpecialties(specialtyCounter) = Recordset.Fields("SpecialtyID").value
 				specialtyCounter = specialtyCounter + 1
 				Recordset.MoveNext
 			LOOP
@@ -781,7 +782,7 @@ Function GetVendorDetailsForEdit(id)
 		IF count = 3 THEN
 			dim arrPracStates(64)
 			DO UNTIL Recordset.EOF				
-				arrPracStates(practicingStatesCounter) = Recordset.Fields("PracticingState").value
+				arrPracStates(practicingStatesCounter) = Recordset.Fields("PracticingStateID").value
 				practicingStatesCounter = practicingStatesCounter + 1
 				Recordset.MoveNext
 			LOOP
@@ -798,9 +799,10 @@ Function GetVendorDetailsForEdit(id)
 		IF count = 4 THEN			
 			IF NOT Recordset.EOF THEN
 				
-				recommended = Recordset.Fields("Recommended").value
+				'recommended = Recordset.Fields("Recommended").value
 				recommFirmAttorney = Recordset.Fields("RecommFirmAtorney").value
 				yearsServiceUsed = Recordset.Fields("YearsServiceUsed").value
+				yearsServiceUsedId = Recordset.Fields("YearsOfServiceUsedId").value
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
@@ -809,14 +811,15 @@ Function GetVendorDetailsForEdit(id)
 					strSB = Replace(strSB,"[RECOMMENDED_BY]",recommendedBy)
 					strSB = Replace(strSB,"[RECOMMENDER_COMPANY]",recommendedBy)'TODO: I don't have recommendor company info yet
 					strSB = Replace(strSB,"[REC_COMMENTS]",recommComment)
-					IF UCase(recommended) = "YES" THEN
+					'IF UCase(recommended) = "YES" THEN
+					IF showRecomInfo THEN
 						strSB = Replace(strSB,"[RECOMMENDED_YES]","checked=""checked""")
 						strSB = Replace(strSB,"[RECOMMENDED_NO]","")
 					Else
 						strSB = Replace(strSB,"[RECOMMENDED_NO]","checked=""checked""")
 						strSB = Replace(strSB,"[RECOMMENDED_YES]","")
 					END IF
-					IF UCase(yearsServiceUsed) = "20+ YEARS" THEN
+					IF yearsServiceUsedId = "90" THEN
 						strSB = Replace(strSB,"[20_YEAR]","selected")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -829,7 +832,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "15+ YEARS" THEN
+					ELSEIF yearsServiceUsedId = "89" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","selected")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -842,7 +845,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "10+ YEARS" THEN
+					ELSEIF yearsServiceUsedId = "88" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","selected")
@@ -855,7 +858,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "9 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "87" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -868,7 +871,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "8 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "86" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -881,7 +884,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "7 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "85" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -894,7 +897,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "6 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "84" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -907,7 +910,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "5 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "83" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -920,7 +923,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "4 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "82" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -933,7 +936,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "3 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "81" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -946,7 +949,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","selected")
 						strSB = Replace(strSB,"[2_YEAR]","")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "2 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "80" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -959,7 +962,7 @@ Function GetVendorDetailsForEdit(id)
 						strSB = Replace(strSB,"[3_YEAR]","")
 						strSB = Replace(strSB,"[2_YEAR]","selected")
 						strSB = Replace(strSB,"[1_YEAR]","")
-					ELSEIF UCase(yearsServiceUsed) = "1 YEARS" THEN
+					ELSEIF yearsServiceUsedId = "79" THEN
 						strSB = Replace(strSB,"[20_YEAR]","")
 						strSB = Replace(strSB,"[15_YEAR]","")
 						strSB = Replace(strSB,"[10_YEAR]","")
@@ -1055,7 +1058,7 @@ Function DeleteVendor(vendorId)
 	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
 	   .CommandText = "DeleteVendor" ' Set the name of the Stored Procedure to use 
-	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,id)		
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,vendorId)		
 	   .Execute
 	End With
 	
@@ -1069,6 +1072,129 @@ Function DeleteVendor(vendorId)
     If Not cmd Is Nothing then Set cmd = Nothing
 	
 End Function
+
+Function GetVendorsDataNotIncludedInVendorDirectory()
+	Set cmd = Server.CreateObject("ADODB.Command")
+	With cmd
+	   .ActiveConnection = IFAconn 
+	   .CommandType = adCmdStoredProc
+	   .CommandText = "ListVendorsNotInDirectory"
+	   set Recordset = .Execute
+	End With
+	
+	strSB = strSB & "<Table>"
+	strSB = strSB & "<THead>"
+	strSB = strSB & "<TD>Member Type</TD>"
+	strSB = strSB & "<TD>Country</TD>"
+	strSB = strSB & "<TD>Company Name</TD>"		
+	strSB = strSB & "<TD>City</TD>"
+	strSB = strSB & "<TD>State</TD>"
+	strSB = strSB & "</THead>"
+	DO UNTIL Recordset.EOF
+		memberId = Recordset.Fields("MemberID").value
+		memberType = Recordset.Fields("MemberType").value
+		country = Recordset.Fields("Country").value
+		companyName = Recordset.Fields("CompanyName").value
+		city = Recordset.Fields("City").value
+		state = Recordset.Fields("State").value
+		strSB = strSB & "<TR>"
+		strSB = strSB & "<TD>"&memberType&"</TD>"
+		strSB = strSB & "<TD>"&Country&"</TD>"
+		strSB = strSB & "<TD><a href=""Add.asp?ID="&memberId&""">"&CompanyName&"</a></TD>"
+		strSB = strSB & "<TD>"&City&"</TD>"
+		strSB = strSB & "<TD>"&State&"</TD>"
+		strSB = strSB & "</TR>"
+		Recordset.MoveNext
+	LOOP
+	strSB = strSB & "</Table>"
+	GetVendorsDataNotIncludedInVendorDirectory = strSB
+	'Clean up
+	set cmd = nothing
+	set Recordset = nothing
+End Function
+
+' Function GetVendorsNotIncludedInVendorDirectory()
+	' dim Recordset,strSB
+	' strSB=""
+	' Recordset = GetVendorsDataNotIncludedInVendorDirectory()
+	' strSB = strSB & "<Table>"
+	' strSB = strSB & "<TH>"
+	' strSB = strSB & "<TD>Member Type</TD>"
+	' strSB = strSB & "<TD>Country</TD>"
+	' strSB = strSB & "<TD>Company Name</TD>"		
+	' strSB = strSB & "<TD>City</TD>"
+	' strSB = strSB & "<TD>State</TD>"
+	' strSB = strSB & "</TH>"
+	' DO UNTIL Recordset.EOF
+		' memberId = Recordset.Fields("MemberID").value
+		' memberType = Recordset.Fields("MemberType").value
+		' country = Recordset.Fields("Country").value
+		' companyName = Recordset.Fields("CompanyName").value
+		' city = Recordset.Fields("City").value
+		' state = Recordset.Fields("State").value
+		' strSB = strSB & "<TR>"
+		' strSB = strSB & "<TD>"&memberType&"</TD>"
+		' strSB = strSB & "<TD>"&Country&"</TD>"
+		' strSB = strSB & "<TD><a href=""Add_Vendor.asp?ID="&memberId&""">"&CompanyName&"</a></TD>"
+		' strSB = strSB & "<TD>"&City&"</TD>"
+		' strSB = strSB & "<TD>"&State&"</TD>"
+		' strSB = strSB & "</TR>"
+	' LOOP
+	' GetVendorsNotIncludedInVendorDirectory = strSB
+' End Function
+
+Function GetVendorMemberDetailsById(id)
+	'TODO: stored proc 'ListVendorsNotInDirectory' can be modified to fetch only the member details by id instead of all the members
+End Function
+
+Function GetAddvendorPage()	
+	strSB = strSB & "<div class='row'>"					
+	strSB = strSB & "<span class='LeftControl'>Category:</span>"
+	strSB = strSB & "<span class='RightControl'>"
+	strSB = strSB & "<select name='Basic_category'>"
+	strSB = strSB & GetVendorCategories("")
+	strSB = strSB & "</select>"
+	strSB = strSB & "</span>"
+	strSB = strSB & "</div>"
+	'if attorney
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>Specialties:</span>"
+		strSB = strSB & "<span class='RightControl'>"
+		strSB = strSB & "<select name='ATTNY_SPECIALTY' multiple>"
+		strSB = strSB & GetAttorneySpecialties("")
+		strSB = strSB & "</select>"
+		strSB = strSB & "</span></div>"
+		
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>Practicing States:</span>"
+		strSB = strSB & "<span class='RightControl'>"
+		strSB = strSB & "<select name='ATTNY_STATE' multiple>"
+		strSB = strSB & GetAttorneyPracticingStates("")
+		strSB = strSB & "</select>"
+		strSB = strSB & "</span></div>"
+		
+		strSB = strSB & strRecommendationsTemplate					
+		strSB = Replace(strSB,"[RECOMMENDED_BY]","")
+		strSB = Replace(strSB,"[RECOMMENDER_COMPANY]","")
+		strSB = Replace(strSB,"[REC_COMMENTS]","")
+		
+		strSB = Replace(strSB,"[RECOMMENDED_YES]","")
+		strSB = Replace(strSB,"[RECOMMENDED_NO]","")
+		
+		strSB = Replace(strSB,"[20_YEAR]","")
+		strSB = Replace(strSB,"[15_YEAR]","")
+		strSB = Replace(strSB,"[10_YEAR]","")
+		strSB = Replace(strSB,"[9_YEAR]","")
+		strSB = Replace(strSB,"[8_YEAR]","")
+		strSB = Replace(strSB,"[7_YEAR]","")
+		strSB = Replace(strSB,"[6_YEAR]","")
+		strSB = Replace(strSB,"[5_YEAR]","")
+		strSB = Replace(strSB,"[4_YEAR]","")
+		strSB = Replace(strSB,"[3_YEAR]","")
+		strSB = Replace(strSB,"[2_YEAR]","")
+		strSB = Replace(strSB,"[1_YEAR]","")
+	GetAddvendorPage = strSB
+END Function
 
 '***** Loads in an HTML Template that a designer can work on separatly from the programming.
 function GetTemplate2(sTemplateFileName)

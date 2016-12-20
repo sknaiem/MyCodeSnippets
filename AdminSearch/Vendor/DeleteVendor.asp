@@ -13,8 +13,9 @@ vendorID = trim(Request.QueryString("ID"))
 '_________________________________________
 
 '******************************* Page Processing '*******************************
-IF vendorID <> "" THEN
+IF len(vendorID)> 0 THEN
 	'If vendorID is provided then call the SP and get data
+	'strSB = strSB & "Vendor ID:"&vendorID
 	isDeleted = DeleteVendor(vendorID)
 	IF isDeleted THEN
 		strSB = strSB & "<center><font color='red'><b>"&vendorID&"</b> has been deleted</font><br/>"
@@ -24,7 +25,10 @@ IF vendorID <> "" THEN
 		strSB = strSB & "<a href='Search.asp'>Click here to go back to Search Page</a>"
 	END IF
 	strDisplay = strSB
- END IF 
+ELSE
+	strSB = strSB & "<center><font color='red'>Vendor selected is not a valid vendor</font><br/>"
+	strSB = strSB & "<a href='Search.asp'>Click here to go back to Search Page</a>"
+END IF 
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

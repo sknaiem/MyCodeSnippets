@@ -4,12 +4,7 @@
 <!--#include file="../console/TL_Reference.asp"-->
 <!--#include file="../IFAConnection.asp" -->
 <!--#include file="vendor_search_functions.asp" -->
-<%
-    'MBELCHER: Case 25487 - Administration.
-
-'Response.Write ("Application('fraudconnectionstring') = " &  Application("fraudconnectionstring") & "<br>")
-    'loggedin = True
-    'http://secure.qa.membershipsoftware.org/ifa/login.asp
+<%    
 If NOT trim(session("loggedin"))="True" Then
 	response.redirect trim(application("siteurl"))& "../../login.asp"
 End If 

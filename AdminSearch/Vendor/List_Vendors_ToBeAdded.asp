@@ -9,15 +9,11 @@ If NOT trim(session("loggedin"))="True" Then
 	response.redirect trim(application("siteurl"))& "../../login.asp"
 End If 
 '________________ REQUEST.FORM ________________
-vendorID = trim(Request.QueryString("ID"))
+
 '_________________________________________
 
 '******************************* Page Processing '*******************************
-IF vendorID <> "" THEN
-	'If vendorID is provided then call the SP and get data
-	strSB = GetVendorDetails(vendorID)
-	strDisplay = strSB
- END IF 
+strDisplay = GetVendorsDataNotIncludedInVendorDirectory()
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -28,15 +24,9 @@ IF vendorID <> "" THEN
 </head>
 <body>
 <!-- #include file="../TL_Header.asp" -->
- <h1>VENDOR DETAILS</h1>
+<h1>VENDOR TO BE ADDED IN VENDOR DIRECTORY</h1>
 <div id="VendorDetails">
 <%=strDisplay %>
-<a href="Edit.asp?ID=<%=vendorID%>">
-<input type="button" value="Edit" />
-</a>
-<a href="DeleteVendor.asp?ID=<%=vendorID%>">
-<input type="button" value="Delete" />
-</a>
 <!-- #include file="../TL_Footer.asp" -->
 </body>
 </html>
