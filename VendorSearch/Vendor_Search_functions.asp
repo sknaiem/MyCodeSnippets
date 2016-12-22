@@ -940,14 +940,47 @@ Function GetLogoUploadControl(memberId)
 			if noLogo then
 				strSB = strSB & "<div class='row'><input onclick='openAddPhoto()' type='button' value='Add Photo/Logo' /></div>"
 			else
-				imagePath = trim(application("consoleurl"))&"/vendor_logo/"&memberId&"/"&trim(logoFileName)
+				imagePath = trim(application("siteurl"))&"/vendor_logo/"&memberId&"/"&trim(logoFileName)'trim(application("consoleurl"))&"/vendor_logo/"&memberId&"/"&trim(logoFileName)
 				strSB = strSB & "<div class='LeftControl'><img class='vendor_logo' src='"&imagePath&"' style='max-height:200px;max-width:200px;'/></div>"
-				strSB = strSB & "<div class='LeftControl'><a href='javascript:confirm_delete(""delete_vendor_logo.asp?ID="&memberId&""")'>Delete</a></div>"
+				strSB = strSB & "<div class='LeftControl'><a href='javascript:confirm_delete(""delete_vendor_logo.asp"")'>Delete</a></div>"
 			end if
 		END IF
 	END IF
 	GetLogoUploadControl = strSB	
 End Function
+
+Function AddOrUpdateVendorDetails(model)
+	AddOrUpdateVendorDetails = false
+	Set cmd = Server.CreateObject("ADODB.Command")
+	With cmd
+	   .ActiveConnection = IFAconn 
+	   .CommandType = adCmdStoredProc
+	   .CommandText = "SaveVendor" ' Set the name of the Stored Procedure to use 
+	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,model(0))
+	   .Parameters.Append .CreateParameter("@CategoryID",adInteger,adParamInput,,model(1))
+	   .Parameters.Append .CreateParameter("@ServiceYearsID",adInteger,adParamInput,,model(2))
+	   .Parameters.Append .CreateParameter("@RecommendedFirm",adBoolean,adParamInput,,model(3))
+	   .Parameters.Append .CreateParameter("@RecommendedAttorney",adBoolean,adParamInput,,model(4))
+	   .Parameters.Append .CreateParameter("@RecommendedBy",adVarChar,adParamInput,500,model(5))
+	   .Parameters.Append .CreateParameter("@ShowRecomInfo",adBoolean,adParamInput,,model(6))
+	   .Parameters.Append .CreateParameter("@RecommComment",adVarChar,adParamInput,500,model(7))
+	   .Parameters.Append .CreateParameter("@LogoPath",adVarChar,adParamInput,255,model(8))
+	   .Parameters.Append .CreateParameter("@Specialties",adVarChar,adParamInput,255,model(9))
+	   .Parameters.Append .CreateParameter("@PracticingState",adVarChar,adParamInput,255,model(10))	   
+		
+	   .Execute
+	End With
+	
+	If Err.number <> 0 Then
+		err.Clear 
+	Else
+		AddOrUpdateVendorDetails = TRUE
+	End If
+	
+	Set cmd.ActiveConnection = Nothing
+    If Not cmd Is Nothing then Set cmd = Nothing	
+End Function
+
 
 
 '***** Loads in an HTML Template that a designer can work on separatly from the programming.

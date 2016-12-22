@@ -804,6 +804,24 @@ Function GetVendorDetailsForEdit(id)
 				showRecomInfo = Recordset.Fields("ShowRecomInfo").value
 				recommComment = Recordset.Fields("RecommComment").value
 				recommendedBy = Recordset.Fields("RecommendedBy").value
+				IF ISNULL(recommFirmAttorney) THEN
+					recommFirmAttorney = ""
+				END IF
+				IF ISNULL(yearsServiceUsed) THEN
+					yearsServiceUsed = ""
+				END IF
+				IF ISNULL(yearsServiceUsedId) THEN
+					yearsServiceUsedId = ""
+				END IF
+				IF IsNULL(showRecomInfo) THEN
+					showRecomInfo = false
+				END IF
+				IF ISNUll(recommComment) THEN
+					recommComment = ""
+				END IF
+				IF ISNUll(recommendedBy)  THEN
+					recommendedBy = ""
+				END IF
 				IF isAttorney THEN
 					strSB = strSB & strRecommendationsTemplate					
 					strSB = Replace(strSB,"[RECOMMENDED_BY]",recommendedBy)
@@ -1095,14 +1113,14 @@ Function GetVendorsDataNotIncludedInVendorDirectory()
 	   set Recordset = .Execute
 	End With
 	
-	strSB = strSB & "<Table>"
-	strSB = strSB & "<THead>"
-	strSB = strSB & "<TD>Member Type</TD>"
-	strSB = strSB & "<TD>Country</TD>"
-	strSB = strSB & "<TD>Company Name</TD>"		
-	strSB = strSB & "<TD>City</TD>"
-	strSB = strSB & "<TD>State</TD>"
-	strSB = strSB & "</THead>"
+	strSB = strSB & "<Table class='vendors_table'>"
+	strSB = strSB & "<THead><tr class='vendors_table_header'>"
+	strSB = strSB & "<TH>Member Type</TD>"
+	strSB = strSB & "<TH>Country</TD>"
+	strSB = strSB & "<TH>Company Name</TD>"		
+	strSB = strSB & "<TH>City</TD>"
+	strSB = strSB & "<TH>State</TD>"
+	strSB = strSB & "</tr></THead>"
 	DO UNTIL Recordset.EOF
 		memberId = Recordset.Fields("MemberID").value
 		memberType = Recordset.Fields("MemberType").value
@@ -1110,10 +1128,10 @@ Function GetVendorsDataNotIncludedInVendorDirectory()
 		companyName = Recordset.Fields("CompanyName").value
 		city = Recordset.Fields("City").value
 		state = Recordset.Fields("State").value
-		strSB = strSB & "<TR>"
+		strSB = strSB & "<TR class='vendors_table_row'>"
 		strSB = strSB & "<TD>"&memberType&"</TD>"
 		strSB = strSB & "<TD>"&Country&"</TD>"
-		strSB = strSB & "<TD><a href=""Add.asp?ID="&memberId&"&memberType="&memberType&""">"&CompanyName&"</a></TD>"
+		strSB = strSB & "<TD><a href=""Add.asp?ID="&memberId&""">"&CompanyName&"</a></TD>"
 		strSB = strSB & "<TD>"&City&"</TD>"
 		strSB = strSB & "<TD>"&State&"</TD>"
 		strSB = strSB & "</TR>"
@@ -1157,14 +1175,63 @@ End Function
 ' End Function
 
 Function GetVendorMemberDetailsById(id)
-	'TODO: stored proc 'ListVendorsNotInDirectory' can be modified to fetch only the member details by id instead of all the members
+	Set cmd = Server.CreateObject("ADODB.Command")
+	With cmd
+	   .ActiveConnection = IFAconn 
+	   .CommandType = adCmdStoredProc
+	   .CommandText = "ListVendorsNotInDirectory"
+	   .Parameters.Append .CreateParameter("@memberID",adInteger,adParamInput,,id)
+	   set Recordset = .Execute
+	End With
+	SET GetVendorMemberDetailsById = Recordset
+	SET cmd = Nothing
+	SET Recordset = Nothing
 End Function
 
-Function GetAddvendorPage(memberType)		
-	dim strSB,isAttorney
+Function GetAddvendorPage(id)		
+	dim strSB,isAttorney,companyName, city,state,province,country,memberType,Recordset
 	strSB = ""
+	companyName = ""
+	city = ""
+	state = ""
+	province = ""
+	country = ""
+	memberType = ""	
+	
+	SET Recordset = GetVendorMemberDetailsById(id)
+	DO UNTIL Recordset.EOF
+		companyName = Recordset.Fields("CompanyName")
+		city = Recordset.Fields("City")
+		state = Recordset.Fields("State")
+		province = Recordset.Fields("Province")
+		country = Recordset.Fields("Country")
+		memberType = Recordset.Fields("MemberType")
+		memberTypeID = Recordset.Fields("MemberTypeID")
+		
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>Company Name:</span>"
+		strSB = strSB & "<span class='RightControl'>"&companyName&"</span>"
+		strSB = strSB & "</div>"
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>City:</span>"
+		strSB = strSB & "<span class='RightControl'>"&city&"</span>"
+		strSB = strSB & "</div>"
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>State/Province:</span>"
+		IF state <> "" THEN
+			strSB = strSB & "<span class='RightControl'>"&state&"</span>"
+		ELSE
+			strSB = strSB & "<span class='RightControl'>"&province&"</span>"
+		END IF
+		strSB = strSB & "</div>"
+		strSB = strSB & "<div class='row'>"
+		strSB = strSB & "<span class='LeftControl'>Country:</span>"
+		strSB = strSB & "<span class='RightControl'>"&country&"</span>"
+		strSB = strSB & "</div>"
+		Recordset.MoveNext
+	LOOP
 	isAttorney = false
-	isAttorney = instr(1,memberType,"Attorney",1)>0
+	isAttorney = memberTypeID = 9 OR memberTypeID = 10 
 	strSB = strSB & "<div class='row'>"					
 	strSB = strSB & "<span class='LeftControl'>Category:</span>"
 	strSB = strSB & "<span class='RightControl'>"

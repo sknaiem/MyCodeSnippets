@@ -33,35 +33,47 @@ vendorID = trim(Session("sa_memberid"))
 '******************************* Page Processing '*******************************
 process = Request.Form("process")
 IF process THEN
-	dim specialties,i,pipeDelimitedSpecialties,pipeDelimitedStates,isSavedSuccessfully
-	specialties = split(trim(Request.Form("ATTNY_SPECIALTY")),",")
-	practStates = split(trim(Request.Form("ATTNY_STATE")),",")
-	FOR i=0 to UBound(specialties)
-		IF i=0 THEN
-			pipeDelimitedSpecialties = specialties(i)
-		ELSE
-			pipeDelimitedSpecialties = pipeDelimitedSpecialties &"|"&specialties(i)
-		END IF
-	Next
-	FOR i=0 to UBound(practStates)
-		IF i=0 THEN
-			pipeDelimitedStates = practStates(i)
-		ELSE
-			pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
-		END IF
-	Next
+	dim specialties,i,pipeDelimitedSpecialties,pipeDelimitedStates,isSavedSuccessfully, csSpecialties, csPractStates
+	csSpecialties = trim(Request.Form("ATTNY_SPECIALTY"))
+	csPractStates = trim(Request.Form("ATTNY_STATE"))
+	
+	IF csSpecialties = "" THEN
+		pipeDelimitedSpecialties = null
+	ELSE
+		specialties = split(csSpecialties,",")	
+		FOR i=0 to UBound(specialties)
+			IF i=0 THEN
+				pipeDelimitedSpecialties = specialties(i)
+			ELSE
+				pipeDelimitedSpecialties = pipeDelimitedSpecialties &"|"&specialties(i)
+			END IF
+		Next
+	END IF
+	IF csPractStates <> "" THEN
+		practStates = split(csPractStates,",")
+		FOR i=0 to UBound(practStates)
+			IF i=0 THEN
+				pipeDelimitedStates = practStates(i)
+			ELSE
+				pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
+			END IF
+		Next
+	ELSE
+		pipeDelimitedStates = null
+	END IF
+	
 	category = trim(Request.Form("Basic_category"))	
-	logoPath = trim(Request.Form("logoPath"))
+	'logoPath = trim(Request.Form("logoPath"))
 	dim model(10)
 	model(0) = vendorID
 	model(1) = category
-	model(2) = yearsOfServiceUsed
-	model(3) = recommendedFirm
-	model(4) = recommendedAttorney
-	model(5) = recommendedBy
-	model(6) = isRecommended
-	model(7) = recommendationComments
-	model(8) = logoPath
+	model(2) = null'yearsOfServiceUsed
+	model(3) = null'recommendedFirm
+	model(4) = null'recommendedAttorney
+	model(5) = null'recommendedBy
+	model(6) = null'isRecommended
+	model(7) = null'recommendationComments
+	model(8) = null'logoPath
 	model(9) = pipeDelimitedSpecialties
 	model(10) = pipeDelimitedStates
 	'ToDo: Remove later
@@ -79,13 +91,13 @@ IF process THEN
 	strSB = strSB & "<span>pract states:</span><span>"&model(10)&"</span><br/>"
 	strDisplay = strSB
 	' TODO: Remove above code
-	'isSavedSuccessfully = AddOrUpdateVendorDetails(model)
+	isSavedSuccessfully = AddOrUpdateVendorDetails(model)
 	' TODO: show confirmation page.
-	'Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
+	Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
 ELSE
 	IF vendorID <> "" and IsNumeric(vendorID) THEN
 		'If vendorID is provided then call the SP and get data
-		strSB = GetVendorDetailsForEdit("901")	
+		strSB = GetVendorDetailsForEdit(vendorID)	
 		strDisplay = strSB	
 	ELSE  
 		strDisplay = "Unable to fetch vendor information"

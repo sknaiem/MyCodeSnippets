@@ -21,10 +21,28 @@ strDisplay = GetVendorsDataNotIncludedInVendorDirectory()
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><%=TOPS_PAGE_HTML_TITLE%></title>
+<style type="text/css">
+.vendors_table{
+	width:100%;
+	cellpadding:2px;
+	cellspacing:2px;
+}
+.vendors_table_header{
+	font-weight: bold;
+    color: #ffffff;
+    padding: 4px;
+    vertical-align: middle;
+    background-color: #054e86;
+    text-align: left;
+}
+.vendors_table_row{
+	background-color:#eeeeee;
+}	
+</style>
 </head>
 <body>
 <!-- #include file="../TL_Header.asp" -->
-<h1>VENDOR TO BE ADDED IN VENDOR DIRECTORY</h1>
+<h1>MEMBERS TO BE ADDED IN VENDOR DIRECTORY</h1>
 <div id="VendorDetails">
 <%=strDisplay %>
 <!-- #include file="../TL_Footer.asp" -->

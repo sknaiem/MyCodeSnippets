@@ -40,7 +40,8 @@ END IF
 <body>
 <!-- #include file="../TL_Header.asp" -->
 <h1>DELETE VENDOR</h1>
-<div id="DeleteVendor">
+<span>This page is for deleting a vendor from vendor directory.</span>
+<div id="DeleteVendor" class="deletevendor">
 <%=strDisplay %>
 <!-- #include file="../TL_Footer.asp" -->
 </body>

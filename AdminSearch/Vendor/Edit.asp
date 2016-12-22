@@ -115,8 +115,9 @@ float:left;
 <body>
 <!-- #include file="../TL_Header.asp" -->
  <h1>EDIT VENDOR</h1>
+ <span>This page is for editing the vendor details.Logo can be uploaded for preferred vendors/preferred attorneys.Attorneys category will have additional fields which can be updated.</span>
 <form name="frmEditVendor" id="frmEditVendor" method="post"> 
-<div id="EditVendor">
+<div id="EditVendor" class="editvendor">
 <%=strDisplay %>
 <%
 ' dim i

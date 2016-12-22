@@ -1,9 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<!--#include file="../console/common.asp"-->
-<!--#include file="../console/TL_Reference.asp"-->
 <!--#include file="../IFAConnection.asp" -->
-<!--#include file="../console/Connection.asp" -->
+<!--#include file="../includes/control.asp"-->
+<!--#include file="../includes/siteaccess.asp"-->
+<!--#include file="../includes/staticcm.asp"-->
+<!--#include file="../includes/custom_cfcc.asp"-->
+<!--#include file="../includes/advertising.asp"-->
+<!--#include file="../includes/rotate_sub.asp"-->
+<!--#include file="../includes/displayformatteditem2.asp"-->
+<!--#include file="../includes/member_directory.asp"-->
+<!--#include file="../includes/member_control.asp"-->
+
+
+
 <html>
 
 <head>
@@ -22,18 +31,18 @@ function PB(desktopURL)
 </script>
 <body bgcolor="#FFFFFF">
 <%
-memberID = trim(Request.QueryString("ID"))
+memberID = session("sa_id")
 if session("vendor_logo")<>"" and request("addphoto")<>1 then
 	Set cmd = Server.CreateObject("ADODB.Command")
 	With cmd
 	   .ActiveConnection = IFAconn 
 	   .CommandType = adCmdStoredProc
-	   .CommandText = "SaveVendorLogo" ' Set the name of the Stored Procedure to use 
+	   .CommandText = "SaveVendorLogo" 
 	   .Parameters.Append .CreateParameter("@MemberID",adInteger,adParamInput,,memberID)
 	   .Parameters.Append .CreateParameter("@LogoPath",adVarChar,adParamInput,255,Session("vendor_logo"))	   
 	   .Execute
 	End With
-	conn.execute "insert into User_Modify_Log (userid,field_modified,previous_value,current_value,modify_date,modify_by) values("&memberID&",'Photo_Link','Null','"&session("vendor_logo")&"', '"&now()&"','"&memberID&"')"
+	'conn.execute "insert into User_Modify_Log (userid,field_modified,previous_value,current_value,modify_date,modify_by) values("&memberID&",'Photo_Link','Null','"&session("vendor_logo")&"', '"&now()&"','"&memberID&"')"
 %>
 	<script language="JavaScript" type="text/JavaScript">
 	self.close();
@@ -60,8 +69,7 @@ else%>
 	<FORM method="POST" action="ul_vendorlogo.asp" enctype="multipart/form-data" id="Form4" >
 	<TR><TD style="padding-left:10px">	
   <INPUT type="FILE" name="FILE1" size="40" id="File2"><br /><Br /></TD></TR>
-  <TR><TD style="padding-left:10px">
-	<INPUT type="hidden" name="memberID" value="<%=memberID%>" />
+  <TR><TD style="padding-left:10px">	
    <INPUT type="submit" name="submit" value="Upload Photo" border="0" >
   </TD></TR>
     </form>

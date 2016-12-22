@@ -19,37 +19,60 @@ memberType = trim(Request.QueryString("memberType"))
 '******************************* Page Processing '*******************************
 process = Request.Form("process")
 IF process THEN
-	dim specialties,i,pipeDelimitedSpecialties,pipeDelimitedStates,isSavedSuccessfully
-	specialties = split(trim(Request.Form("ATTNY_SPECIALTY")),",")
-	practStates = split(trim(Request.Form("ATTNY_STATE")),",")
-	FOR i=0 to UBound(specialties)
-		IF i=0 THEN
-			pipeDelimitedSpecialties = specialties(i)
-		ELSE
-			pipeDelimitedSpecialties = pipeDelimitedSpecialties &"|"&specialties(i)
-		END IF
-	Next
-	FOR i=0 to UBound(practStates)
-		IF i=0 THEN
-			pipeDelimitedStates = practStates(i)
-		ELSE
-			pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
-		END IF
-	Next
-	category = trim(Request.Form("Basic_category"))
+	dim specialties,i,pipeDelimitedSpecialties,pipeDelimitedStates,isSavedSuccessfully,csSpecialties, csPractStates
+	csSpecialties = trim(Request.Form("ATTNY_SPECIALTY"))
+	csPractStates = trim(Request.Form("ATTNY_STATE"))
+	
+	IF csSpecialties = "" THEN
+		pipeDelimitedSpecialties = null
+	ELSE
+		specialties = split(csSpecialties,",")	
+		FOR i=0 to UBound(specialties)
+			IF i=0 THEN
+				pipeDelimitedSpecialties = specialties(i)
+			ELSE
+				pipeDelimitedSpecialties = pipeDelimitedSpecialties &"|"&specialties(i)
+			END IF
+		Next
+	END IF
+	IF csPractStates <> "" THEN
+		practStates = split(csPractStates,",")
+		FOR i=0 to UBound(practStates)
+			IF i=0 THEN
+				pipeDelimitedStates = practStates(i)
+			ELSE
+				pipeDelimitedStates = pipeDelimitedStates &"|"&practStates(i)
+			END IF
+		Next
+	ELSE
+		pipeDelimitedStates = null
+	END IF
+	category = trim(Request.Form("Basic_category"))' TODO: if category is not provided then no need to go further.
 	yearsOfServiceUsed = trim(Request.Form("yearsOfServiceUsed"))
+	IF yearsOfServiceUsed = "" THEN
+		yearsOfServiceUsed =  NULL
+	END IF
 	recommendedFirm = trim(Request.Form("chkFirm"))
 	if len(recommendedFirm)<=0 then
-		recommendedFirm = 0
+		recommendedFirm = NULL
 	End if	
 	recommendedAttorney = trim(Request.Form("chkAttorney"))
 	if len(recommendedAttorney)<=0 then
-		recommendedAttorney = 0
+		recommendedAttorney = NULL
 	End if	
 	recommendedBy = trim(Request.Form("txtRecommendedBy"))
+	IF len(recommendedBy) <=0 THEN
+		recommendedBy = NULL
+	END IF
 	isRecommended = trim(Request.Form("rdoRecommended"))
 	recommendationComments = trim(Request.Form("txtRecommendationComments"))
+	IF len(recommendationComments)<=0 THEN
+		recommendationComments = NULL
+	END IF	
 	logoPath = trim(Request.Form("logoPath"))
+	IF len(logoPath) <=0 THEN
+		logoPath = NULL
+	END IF
 	dim model(10)
 	model(0) = vendorID
 	model(1) = category
@@ -81,13 +104,13 @@ IF process THEN
 	' TODO: show confirmation page.
 	Response.Redirect("Confirm.asp?success="&isSavedSuccessfully)
 ELSE
-	IF vendorID <> "" THEN
+	IF vendorID <> "" AND IsNumeric(vendorID) THEN
 		const TEMPLATE_PATH = "templates/"
 		const ForReading = 1, ForWriting = 2, ForAppending = 8
 		strRecommendationsTemplate = GetTemplate2("vendor_recommendations.htm")
 		
 		'If vendorID is provided then call the SP and get data
-		strSB = GetAddvendorPage(memberType)	
+		strSB = GetAddvendorPage(vendorID)	
 		strDisplay = strSB
 	END IF
 END IF
@@ -114,13 +137,19 @@ span.RightControl
 width:70%;
 float:left;
 }
+.addvendor
+{
+padding-left:15px;
+padding-right:15px;
+}
 </style>
 </head>
 <body>
 <!-- #include file="../TL_Header.asp" -->
  <h1>ADD VENDOR</h1>
+ <span>This page is for adding Member to vendor directory.Once vendor is added to vendor directory,if Logo has to be uploaded then search for the vendor in search page and Edit the vendor, then upload the logo</span>
 <form name="frmAddVendor" id="frmAddVendor" method="post"> 
-<div id="AddVendor">
+<div id="AddVendor" class="addvendor">
 <%=strDisplay %>
 </div>
 <input type="hidden" name="process" value="1" />
